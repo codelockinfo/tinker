@@ -703,6 +703,12 @@
      position: relative;
   }
 
+  /* Remove full-width background from overflow-menu */
+  .menu-list--simple .overflow-menu::after {
+    display: none !important;
+    content: none !important;
+  }
+
   .menu-list--simple .menu-list__submenu {
      width: max-content !important;
      min-width: 200px;
