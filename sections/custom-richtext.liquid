@@ -1,0 +1,209 @@
+<section class="disclaimer-layout">
+    <div class="custom-container">
+        <div class="page-width disclaimer-grid">
+
+            <!-- LEFT SIDE : RICHTEXT CONTENT -->
+            <div class="disclaimer-left">
+            {{ section.settings.main_content }}
+            </div>
+
+            <!-- RIGHT SIDE : SIDEBAR -->
+            <aside class="disclaimer-right">
+
+            <!-- NEWSLETTER -->
+            <div class="sidebar-box">
+                <h3>{{ section.settings.newsletter_title }}</h3>
+
+                <form method="post" action="/contact#newsletter" accept-charset="UTF-8" class="newsletter-form">
+                <input type="hidden" name="form_type" value="customer">
+                <input type="hidden" name="utf8" value="✓">
+
+                <input
+                    type="email"
+                    name="contact[email]"
+                    placeholder="Email"
+                    required
+                >
+
+                <button type="submit">Submit</button>
+                </form>
+            </div>
+
+            <!-- RECENT POSTS -->
+            {% if section.settings.recent_posts != blank %}
+            <div class="sidebar-box">
+                <h3>{{ section.settings.recent_posts_title }}</h3>
+                {{ section.settings.recent_posts }}
+            </div>
+            {% endif %}
+
+            <!-- CATEGORIES -->
+            {% if section.settings.categories != blank %}
+            <div class="sidebar-box">
+                <h3>{{ section.settings.categories_title }}</h3>
+                {{ section.settings.categories }}
+            </div>
+            {% endif %}
+
+            </aside>
+
+        </div>
+    </div>
+</section>
+
+<style>
+.disclaimer-layout {
+  padding: 60px 0;
+}
+.disclaimer-layout .custom-container{
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 15px;
+}
+.disclaimer-grid {
+  display: grid;
+  grid-template-columns: 2.2fr 1fr;
+  gap: 60px;
+}
+
+/* LEFT CONTENT */
+.disclaimer-left h2,
+.disclaimer-left h3 {
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.disclaimer-left p {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #555;
+  margin-bottom: 18px;
+}
+
+/* SIDEBAR */
+.disclaimer-right .sidebar-box {
+  margin-bottom: 45px;
+}
+
+.sidebar-box h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+
+/* NEWSLETTER */
+.newsletter-form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.newsletter-form input {
+  flex: 1;
+  height: 44px;
+  border-radius: 30px;
+  border: 1px solid #ddd;
+  padding: 0 18px;
+  font-size: 14px;
+  outline: none;
+  background: #fff;
+}
+
+.newsletter-form input::placeholder {
+  color: #999;
+}
+
+.newsletter-form button {
+  height: 44px;
+  padding: 0 26px;
+  border-radius: 30px;
+  border: none;
+  background: #146dd4;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.newsletter-form button:hover {
+  background: rgb(15, 99, 196)s;
+}
+
+/* LISTS */
+.sidebar-box ul {
+  padding-left: 18px;
+}
+
+.sidebar-box li {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #666;
+}
+
+.sidebar-box a {
+  color: #333;
+  text-decoration: none;
+}
+
+.sidebar-box a:hover {
+  text-decoration: underline;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .disclaimer-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .disclaimer-layout {
+    padding: 0px 0;
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Disclaimer",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "main_content",
+      "label": "Main Disclaimer Content"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_title",
+      "label": "Newsletter Title",
+      "default": "Subscribe for Newsletter"
+    },
+    {
+      "type": "text",
+      "id": "recent_posts_title",
+      "label": "Recent Posts Title",
+      "default": "Recent Posts"
+    },
+    {
+      "type": "richtext",
+      "id": "recent_posts",
+      "label": "Recent Posts Content"
+    },
+    {
+      "type": "text",
+      "id": "categories_title",
+      "label": "Categories Title",
+      "default": "Categories"
+    },
+    {
+      "type": "richtext",
+      "id": "categories",
+      "label": "Categories Content"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Disclaimer Page"
+    }
+  ]
+}
+{% endschema %}

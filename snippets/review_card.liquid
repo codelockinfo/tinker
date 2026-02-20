@@ -1,0 +1,62 @@
+{%- liquid
+  assign reviewer_name = block.settings.reviewer_name
+  assign platform = block.settings.platform
+  assign profile_image = block.settings.profile_image
+  assign profile_bg_color = block.settings.profile_bg_color | default: '#4285F4'
+  assign rating = block.settings.rating
+  assign time_ago = block.settings.time_ago
+  assign review_text = block.settings.review_text
+  assign read_more_link = block.settings.read_more_link
+  assign initial_letter = reviewer_name | slice: 0, 1 | upcase
+-%}
+
+<div class="review_card">
+  <div class="review_card_header">
+    {%- if platform == 'google' -%}
+      <div class="platform_logo platform_google">
+        <img loading="lazy" class="logo" src="https://cdn.shopify.com/s/files/1/0644/3067/0060/files/google_x100.png?v=1663569230" alt="Google logo">
+      </div>
+    {%- elsif platform == 'trustpilot' -%}
+      <div class="platform_logo platform_trustpilot">
+        <img loading="lazy" class="logo" src="https://cdn.shopify.com/s/files/1/0644/3067/0060/files/Trustpilot_brandmark_center_x100.png?v=1703209158" alt="Trustpilot">
+      </div>
+    {%- endif -%}
+  </div>
+  
+  <div class="review_card_body">
+    <div class="reviewer_info">
+      <div class="reviewer_avatar">
+        {%- if profile_image != blank -%}
+          <img src="{{ profile_image | img_url: '100x100' }}" alt="{{ reviewer_name }}" class="profile_image">
+        {%- else -%}
+          <div class="profile_initial" style="background-color: {{ profile_bg_color }};">
+            {{ initial_letter }}
+          </div>
+        {%- endif -%}
+      </div>
+      <div class="reviewer_details">
+        <div class="reviewer_name">{{ reviewer_name }}</div>
+        <div class="custom-review-common">
+          <div class="review_rating rating_platform_{{ platform }}">
+            {%- for i in (1..5) -%}
+              {%- if i <= rating -%}
+                <span class="star filled">★</span>
+              {%- else -%}
+                <span class="star">★</span>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+          <div class="review_time">{{ time_ago }}</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="review_content">
+      {{ review_text }}
+      {%- if read_more_link != blank -%}
+        <a href="{{ read_more_link }}" class="read_more_link" target="_blank">Read more</a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,195 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+{%- liquid
+  assign layout = section.settings.layout
+  assign vpv_desktop = section.settings.vpv_desktop
+  assign vpv_mobile = section.settings.vpv_mobile
+-%}
+
+<section class="collection-list-section video-slider-{{ section.id }} {{ layout }}">
+  <div class="collection-list-wrapper {% if layout == 'container' %}container-1440{% endif %}">
+    <div class="swiper VideoSwiper-{{ section.id }}">
+      <div class="swiper-wrapper">
+        {% for block in section.blocks %}
+          <div class="swiper-slide">
+            <div class="collection-item">
+              <div class="collection-image">
+                {% if block.settings.video_custom %}
+                 <video autoplay muted loop playsinline>
+                    <source src="{{ block.settings.video_custom }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                  </video>
+                {% else %} 
+                  <p>No video available</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+        {% comment %} Duplicate slides for seamless looping when block count is low {% endcomment %}
+        {% if section.blocks.size < 12 %}
+           {% for block in section.blocks %}
+            <div class="swiper-slide">
+              <div class="collection-item">
+                <div class="collection-image">
+                  {% if block.settings.video_custom %}
+                   <video autoplay muted loop playsinline>
+                      <source src="{{ block.settings.video_custom }}" type="video/mp4">
+                      Your browser does not support the video tag.
+                    </video>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Video List Section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Section Layout",
+      "default": "full_width",
+      "options": [
+        {
+          "value": "full_width",
+          "label": "Full Width"
+        },
+        {
+          "value": "container",
+          "label": "Container (1440px)"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Enable Auto Rotate",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "vpv_desktop",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "label": "Videos per View (Desktop)",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "vpv_mobile",
+      "min": 1,
+      "max": 4,
+      "step": 0.5,
+      "label": "Videos per View (Mobile)",
+      "default": 1.5
+    }
+  ],
+  "blocks": [
+    {
+      "type": "video",
+      "name": "Video Slide",
+      "settings": [
+        {
+          "type": "text",
+          "id": "video_custom",
+          "label": "Video URL"
+        },
+        {
+          "type": "text",
+          "id": "video_caption",
+          "label": "Video Caption",
+          "default": "Your video caption here"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "custom video List"
+    }
+  ]
+}
+{% endschema %}
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+  (function() {
+    var swiper_{{ section.id | replace: '-', '_' }} = new Swiper(".VideoSwiper-{{ section.id }}", {
+      slidesPerView: {{ vpv_desktop }},
+      spaceBetween: 20,
+      freeMode: false,
+      loop: true,
+      loopedSlides: 12,
+      observer: true,
+      observeParents: true,
+      watchSlidesProgress: true,
+      {% if section.settings.autoplay %}
+      autoplay: {
+        delay: 0,
+        disableOnInteraction: false,
+      },
+      speed: 5000,
+      {% else %}
+      autoplay: false,
+      {% endif %}
+      breakpoints: {
+        0: {
+          slidesPerView: {{ vpv_mobile }},
+          spaceBetween: 10,
+        },
+        768: {
+          slidesPerView: Math.max(2, {{ vpv_desktop | minus: 2 }}),
+          spaceBetween: 15,
+        },
+        1024: {
+          slidesPerView: {{ vpv_desktop }},
+          spaceBetween: 20,
+        }
+      }
+    });
+  })();
+</script>
+
+<style>
+  .video-slider-{{ section.id }} {
+    padding: 40px 0;
+    overflow: hidden;
+  }
+  
+  .container-1440 {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0;
+  }
+
+  .video-slider-{{ section.id }} .collection-item {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .video-slider-{{ section.id }} video {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 9 / 16;
+    object-fit: cover;  
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.15);
+    display: block;
+  }
+
+  .VideoSwiper-{{ section.id }} .swiper-slide {
+    height: auto;
+    display: flex;
+    justify-content: center;
+  }
+</style>
+

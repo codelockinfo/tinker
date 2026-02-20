@@ -1,0 +1,151 @@
+{% comment %}
+  Renders a wishlist product card with image, title, rating, price, and remove button
+
+  @param {product} product - The product object to render
+{% endcomment %}
+
+{% if product %}
+  {% liquid
+    assign first_variant = product.selected_or_first_available_variant
+    assign variant_id = first_variant.id | default: ''
+    assign is_available = first_variant.available | default: false
+  %}
+
+  <div class="wishlist-card" data-wishlist-item data-product-id="{{ product.id }}">
+    {% comment %} Remove Button {% endcomment %}
+    <button 
+      class="wishlist-card__remove" 
+      type="button"
+      aria-label="{{ 'wishlist.remove_item' | t }}"
+      data-remove-wishlist-item
+    >
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    {% comment %} Product Image Container with Hover Actions {% endcomment %}
+    <div class="wishlist-card__image-container">
+      <a href="{{ product.url }}" class="wishlist-card__image-wrapper">
+        {% if product.featured_image %}
+          {% liquid
+            assign first_image = product.featured_image
+            assign second_image = product.images[1] | default: product.featured_image
+          %}
+          {% comment %} First Image (Default) {% endcomment %}
+          <img 
+            src="{{ first_image | image_url: width: 600 }}"
+            srcset="{{ first_image | image_url: width: 300 }} 300w,
+                    {{ first_image | image_url: width: 600 }} 600w,
+                    {{ first_image | image_url: width: 900 }} 900w"
+            sizes="(max-width: 768px) 50vw, 33vw"
+            alt="{{ first_image.alt | escape }}"
+            class="wishlist-card__image wishlist-card__image--primary"
+            loading="lazy"
+            width="{{ first_image.width }}"
+            height="{{ first_image.height }}"
+          >
+          {% comment %} Second Image (Hover) {% endcomment %}
+          {% if second_image != first_image %}
+            <img 
+              src="{{ second_image | image_url: width: 600 }}"
+              srcset="{{ second_image | image_url: width: 300 }} 300w,
+                      {{ second_image | image_url: width: 600 }} 600w,
+                      {{ second_image | image_url: width: 900 }} 900w"
+              sizes="(max-width: 768px) 50vw, 33vw"
+              alt="{{ second_image.alt | escape }}"
+              class="wishlist-card__image wishlist-card__image--secondary"
+              loading="lazy"
+              width="{{ second_image.width }}"
+              height="{{ second_image.height }}"
+            >
+          {% else %}
+            {% comment %} If no second image, use same image with zoom effect {% endcomment %}
+            <img 
+              src="{{ first_image | image_url: width: 600 }}"
+              srcset="{{ first_image | image_url: width: 300 }} 300w,
+                      {{ first_image | image_url: width: 600 }} 600w,
+                      {{ first_image | image_url: width: 900 }} 900w"
+              sizes="(max-width: 768px) 50vw, 33vw"
+              alt="{{ first_image.alt | escape }}"
+              class="wishlist-card__image wishlist-card__image--secondary"
+              loading="lazy"
+              width="{{ first_image.width }}"
+              height="{{ first_image.height }}"
+            >
+          {% endif %}
+        {% else %}
+          <div class="wishlist-card__image-placeholder">
+            {{ 'product-1' | placeholder_svg_tag: 'placeholder' }}
+          </div>
+        {% endif %}
+      </a>
+
+      {% comment %} Hover Action Buttons {% endcomment %}
+      <div class="wishlist-card__hover-actions">
+        {% comment %} Quick View Button {% endcomment %}
+        <button 
+          type="button"
+          class="wishlist-card__action-btn wishlist-card__action-btn--quick-view"
+          data-product-card
+          data-product-id="{{ product.id }}"
+          aria-label="Quick view {{ product.title | escape }}"
+          title="Quick view"
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 4C6 4 2.73 6.61 1 10C2.73 13.39 6 16 10 16C14 16 17.27 13.39 19 10C17.27 6.61 14 4 10 4ZM10 14C7.79 14 6 12.21 6 10C6 7.79 7.79 6 10 6C12.21 6 14 7.79 14 10C14 12.21 12.21 14 10 14ZM10 8C8.9 8 8 8.9 8 10C8 11.1 8.9 12 10 12C11.1 12 12 11.1 12 10C12 8.9 11.1 8 10 8Z" fill="currentColor"/>
+          </svg>
+        </button>
+
+        {% comment %} Compare Button {% endcomment %}
+        {% render 'compare-button', product: product, class: 'wishlist-card__action-btn--compare' %}
+      </div>
+
+      {% comment %} Add to Cart Button at Bottom of Image {% endcomment %}
+      {% if variant_id != blank %}
+        <div class="wishlist-card__add-to-cart-wrapper">
+          {% render 'add-to-cart-button', product: product, variant: first_variant, class: 'wishlist-card__add-to-cart-btn' %}
+        </div>
+      {% endif %}
+    </div>
+
+    {% comment %} Product Info {% endcomment %}
+    <div class="wishlist-card__info">
+      <h3 class="wishlist-card__title">
+        <a href="{{ product.url }}">{{ product.title | escape }}</a>
+      </h3>
+
+      {% comment %} Rating {% endcomment %}
+      <div class="wishlist-card__rating">
+        {% liquid
+          assign rating = product.metafields.reviews.rating.value
+          assign reviews_count = product.metafields.reviews.rating_count.value
+          assign rating_value = rating | default: 5 | times: 1.0 | round
+        %}
+        <div class="wishlist-card__stars">
+          {% for i in (1..5) %}
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 1L12.09 7.26L19 8.27L14 12.14L15.18 19.02L10 15.77L4.82 19.02L6 12.14L1 8.27L7.91 7.26L10 1Z" 
+                fill="{% if i <= rating_value %}#FFD700{% else %}#E0E0E0{% endif %}" 
+                stroke="{% if i <= rating_value %}#FFD700{% else %}#E0E0E0{% endif %}" 
+                stroke-width="1"/>
+            </svg>
+          {% endfor %}
+        </div>
+      </div>
+
+      {% comment %} Price {% endcomment %}
+      <div class="wishlist-card__price">
+        {% if product.compare_at_price > product.price %}
+          <span class="wishlist-card__price--sale">{{ product.price | money }}</span>
+          <span class="wishlist-card__price--compare">{{ product.compare_at_price | money }}</span>
+        {% else %}
+          <span>{{ product.price | money }}</span>
+        {% endif %}
+      </div>
+
+      
+    </div>
+  </div>
+{% endif %}
+

@@ -1,0 +1,70 @@
+{% comment %}
+  Renders a product card with horizontal hover actions
+  Horizontal layout: wishlist, quick view, compare, add to cart buttons appear horizontally on hover
+
+  @param {product} product - The product object to render
+  @param {object} settings - Section settings object with show_wishlist, show_quick_view, show_compare, show_add_to_cart
+{% endcomment %}
+
+{% if product %}
+  <div class="image-collection-new product-card-horizontal">
+    {% if product.featured_image != blank %}
+      <div class="product-img">
+        <a href="{{ product.url }}">
+          <img src="{{ product.featured_image | img_url: 'large' }}" class="main-img" loading="lazy" alt="{{ product.featured_image.alt | escape }}">
+          {% if product.images[1] != blank %}
+            <img src="{{ product.images[1] | img_url: 'large' }}" class="hover-image" loading="lazy" alt="{{ product.images[1].alt | escape }}">
+          {% endif %}
+        </a>
+        {% if settings.show_wishlist or settings.show_quick_view or settings.show_compare or settings.show_add_to_cart %}
+        <div class="product-hover-actions product-hover-actions--horizontal">
+          {% if settings.show_wishlist %}
+            {% render 'wishlist-button', product: product, class: 'hover-action-btn' %}
+          {% endif %}
+          {% if settings.show_quick_view %}
+            <button type="button" class="hover-action-btn quick-view-btn" data-product-id="{{ product.id }}" data-product-handle="{{ product.handle }}" aria-label="Quick view {{ product.title | escape }}" title="Quick view">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" fill="none"/>
+                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none"/>
+              </svg>
+            </button>
+          {% endif %}
+          {% comment %} {% if settings.show_compare %}
+            {% render 'compare-button', product: product, class: 'hover-action-btn' %}
+          {% endif %} {% endcomment %}
+          {% if settings.show_add_to_cart %}
+            <form method="post" action="/cart/add" class="hover-action-btn add-to-cart-form" data-ajax-add-to-cart>
+              <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+              <input type="hidden" name="quantity" value="1">
+              <button type="submit" aria-label="Add {{ product.title | escape }} to cart" title="Add to cart" data-variant-id="{{ product.variants.first.id }}">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 22a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" fill="currentColor"/>
+                  <path d="M20 22a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" fill="currentColor"/>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" stroke="currentColor" stroke-width="2" fill="none"/>
+                </svg>
+              </button>
+            </form>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+    {% endif %}
+    <div class="product-content-box">
+      <div class="product-title-custome">
+        <a href="{{ product.url }}">{{ product.title }}</a>
+      </div>
+      <div class="pro-rate1">
+        <div class="product-price-custome">
+          {% if product.compare_at_price > product.price %}
+            <span class="grid-product__price--original">{{ product.compare_at_price | money }}</span>
+          {% endif %}
+          {{ product.price | money }}
+        </div>
+        <div class="jdgm-widget jdgm-preview-badge">
+          {{ product.metafields.judgeme.badge }}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+

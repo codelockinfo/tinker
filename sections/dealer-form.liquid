@@ -1,0 +1,259 @@
+{% comment %}
+Dealer / Inquiry Form Section with Desktop & Mobile Width Controls (FIXED)
+{% endcomment %}
+
+{% liquid
+  assign desktop_width_style = ''
+  if section.settings.desktop_width_mode == 'custom'
+    assign desktop_width_style = section.settings.desktop_width | append: '%'
+  endif
+
+  assign mobile_width_style = ''
+  if section.settings.mobile_width_mode == 'custom'
+    assign mobile_width_style = section.settings.mobile_width | append: '%'
+  endif
+%}
+
+<section
+  class="dealer-form-section"
+  style="
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    padding-left: 20px;
+    padding-right: 20px;
+  "
+>
+  <div
+    class="dealer-form-container"
+    {% if desktop_width_style != '' %}
+      style="max-width: {{ desktop_width_style }};"
+    {% endif %}
+  >
+
+    {% if section.settings.heading != blank %}
+      <h2 class="dealer-form-heading">
+        {{ section.settings.heading }}
+      </h2>
+    {% endif %}
+
+    {% form 'contact', class: 'dealer-form' %}
+
+      <div class="form-group">
+        <label>Your Name</label>
+        <input type="text" name="contact[name]" placeholder="Enter your full name" required>
+      </div>
+
+      <div class="form-group">
+        <label>Mobile Number</label>
+        <input type="tel" name="contact[phone]" placeholder="Enter your mobile number" required>
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="contact[email]" placeholder="Enter your email" required>
+      </div>
+
+      <div class="form-group">
+        <label>State</label>
+        <input type="text" name="contact[state]" placeholder="Enter your state">
+      </div>
+
+      <div class="form-group">
+        <label>City</label>
+        <input type="text" name="contact[city]" placeholder="Enter your city">
+      </div>
+
+      <div class="form-group">
+        <label>Pin Code</label>
+        <input type="text" name="contact[pin_code]" placeholder="Enter pin code">
+      </div>
+
+      <div class="form-group">
+        <label>Address</label>
+        <textarea name="contact[address]" placeholder="Enter your full address"></textarea>
+      </div>
+
+      <button type="submit" class="dealer-form-button">
+        {{ section.settings.button_text }}
+      </button>
+
+      {% if form.posted_successfully? %}
+        <p class="form-success">Thank you! We will contact you soon.</p>
+      {% endif %}
+
+      {% if form.errors %}
+        <p class="form-error">Please fill all required fields correctly.</p>
+      {% endif %}
+
+    {% endform %}
+
+  </div>
+</section>
+
+<style>
+.dealer-form-container {
+  margin: 0 auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  max-width: 520px;
+}
+
+.dealer-form-heading {
+  text-align: center;
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+.dealer-form .form-group {
+  margin-bottom: 16px;
+}
+
+.dealer-form label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.dealer-form input,
+.dealer-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.dealer-form textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.dealer-form input:focus,
+.dealer-form textarea:focus {
+  outline: none;
+  border-color: #146dd4;
+}
+
+.dealer-form-button {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  background: #146dd4;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dealer-form-button:hover {
+  background: rgb(15, 99, 196);
+}
+
+.form-success,
+.form-error {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.form-success { color: green; }
+.form-error { color: red; }
+
+/* ✅ MOBILE WIDTH FIX */
+@media (max-width: 768px) {
+  .dealer-form-container {
+    {% if mobile_width_style != '' %}
+      width: {{ mobile_width_style }} !important;
+      max-width: 100% !important;
+    {% else %}
+      width: 100% !important;
+      max-width: 100% !important;
+    {% endif %}
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Dealer Form",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Form Heading",
+      "default": "Become a Aadhunik Dealer"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Submit"
+    },
+    {
+      "type": "select",
+      "id": "desktop_width_mode",
+      "label": "Desktop Width",
+      "options": [
+        { "value": "fit", "label": "Fit" },
+        { "value": "custom", "label": "Custom" }
+      ],
+      "default": "fit"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width",
+      "label": "Desktop Width (%)",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "default": 50
+    },
+    {
+      "type": "select",
+      "id": "mobile_width_mode",
+      "label": "Mobile Width",
+      "options": [
+        { "value": "fit", "label": "Fit" },
+        { "value": "custom", "label": "Custom" }
+      ],
+      "default": "fit"
+    },
+    {
+      "type": "range",
+      "id": "mobile_width",
+      "label": "Mobile Width (%)",
+      "min": 60,
+      "max": 100,
+      "step": 5,
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "Dealer Inquiry Form"
+    }
+  ]
+}
+{% endschema %}

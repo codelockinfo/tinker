@@ -1,0 +1,849 @@
+{%- liquid
+  assign sid = section.id
+  assign se_stts = section.settings
+  assign layout = se_stts.layout
+  if layout == 'wrap' or layout == 'container'
+   assign html_layout = '<div class="page-width">__</div>' | split:'__'
+  else
+   assign html_layout = '__' | split:'__'
+  endif -%}
+
+<link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+<script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js" defer="defer"></script>
+
+<style>
+  .wrap_title {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .section-title {
+    font-size: 32px;
+    margin: 0 0 10px;
+    font-weight: 600;
+  }
+  .section-subtitle {
+    font-size: 16px;
+    color: #666;
+  }
+  
+  /* Layout handling */
+  .reviews_carousel_wrapper.container {
+    max-width: var(--page-width);
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden; /* Strictly contain slides in Container mode */
+  }
+
+  /* In Wrapped mode, we want the background full width, but the slides should be contained visually 
+     within the page-width if we don't want them bleeding to the edge of the screen */
+  .reviews_carousel_wrapper.wrap {
+    overflow: hidden;
+  }
+  
+  /* If wrapped, ensure the page-width container itself handles the bounds */
+  .reviews_carousel_wrapper.wrap .page-width {
+    overflow: hidden; 
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+</style>
+
+<div class="nt_se_{{sid}} {{layout}} reviews_carousel_wrapper">
+  {{-html_layout[0]-}}
+  {%- if se_stts.title != blank -%}
+    <div class="wrap_title {{ se_stts.style_title }}">
+       <h3 class="section-title"><span>{{ se_stts.title }}</span></h3>
+       {%- if se_stts.sub_title != blank -%}
+         <p class="section-subtitle">{{ se_stts.sub_title }}</p>
+       {%- endif -%}
+    </div>
+  {%- endif -%}
+  
+  <div class="reviews_carousel js_carousel nt_slider prev_next_{{se_stts.btn_color}} btn_owl_{{se_stts.btn_owl}} dot_owl_{{se_stts.dot_owl}} dot_color_{{se_stts.dot_color}} btn_vi_{{se_stts.btn_vi}}" 
+       data-flickity='{"imagesLoaded": true,"adaptiveHeight": false, "contain": true, "groupCells": "100%", "dragThreshold" : 5, "cellAlign": "left","wrapAround": {{se_stts.loop}},"prevNextButtons": {{se_stts.button}},"percentPosition": true,"pageDots": {{se_stts.dot}}, "autoPlay" : {% if se_stts.autoplay %}{{ se_stts.au_time | times: 1000 }}{% else %}false{% endif %},"pauseAutoPlayOnHover" : {{se_stts.au_hover}}, "rightToLeft": false }'>
+    {%- if section.blocks.size > 0 -%}
+      {%- for block in section.blocks -%}
+        <div class="review_card_cell" style="width: {{se_stts.card_width | default: 450}}px;">
+          {%- render 'review_card', block: block -%}
+        </div>
+      {%- endfor -%}
+    {%- else -%}
+       <div style="text-align: center; padding: 40px; color: #fff;">
+         No reviews found. Add blocks in the theme editor.
+       </div>
+    {%- endif -%}
+  </div>
+  {{-html_layout[1]-}}
+</div>
+{%- render 'section_css',classbg:true -%}
+
+{%- schema -%}
+  {
+    "name": "Reviews Carousel",
+    "class": "nt_section type_reviews_carousel type_carousel",
+    "max_blocks": 50,
+    "settings": [
+      {
+        "type": "header",
+        "content": "== Title Settings"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading"
+      },
+      {
+        "type": "textarea",
+        "id": "sub_title",
+        "label": "Sub Text"
+      },
+      {
+        "type": "select",
+        "id": "sub_font",
+        "default": "2",
+        "options": [
+         {
+            "value": "1",
+            "label": "Body font"
+         },
+         {
+            "value": "2",
+            "label": "Sub title font"
+          }
+        ],
+        "label": "Sub Text use font:"
+      },
+      {
+        "type": "select",
+        "id": "style_title",
+        "options": [
+         {
+            "value": "title_1",
+            "label": "Design 1"
+          },
+         {
+            "value": "title_2",
+            "label": "Design 2"
+          },
+         {
+            "value": "title_3",
+            "label": "Design 3"
+          },
+         {
+            "value": "title_4",
+            "label": "Design 4"
+          },
+         {
+            "value": "title_5 lazyload",
+            "label": "Design 5"
+          },
+         {
+            "value": "title_6",
+            "label": "Design 6"
+          },
+         {
+            "value": "title_7 +la",
+            "label": "Design 7 (with line-awesome)"
+          },
+         {
+            "value": "title_8",
+            "label": "Design 8"
+          },
+         {
+            "value": "title_9",
+            "label": "Design 9"
+          },
+         {
+            "value": "title_10",
+            "label": "Design 10"
+          },
+         {
+            "value": "title_11",
+            "label": "Design 11"
+          },
+         {
+            "value": "title_12",
+            "label": "Design 12"
+          },
+         {
+            "value": "title_13",
+            "label": "Design 13"
+          }
+        ],
+        "label": "Design Title:",
+        "default": "title_1"
+      },
+      {
+        "type": "text",
+        "id": "ic_tt",
+        "label": "Style 7 icon line-awesome",
+        "default": "gem"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_clpr",
+        "label": "Use icon color primary?",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "== General Settings"
+      },
+      {
+        "type": "color",
+        "id": "bg_color",
+        "label": "Background Color",
+        "default": "#1a4d3a"
+      },
+      {
+        "type": "range",
+        "id": "card_width",
+        "min": 300,
+        "max": 500,
+        "step": 10,
+        "label": "Review Card Width",
+        "unit": "px",
+        "default": 450
+      },
+      {
+        "type": "header",
+        "content": "== Slider Settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "loop",
+        "label": "Use Loop?",
+        "info": "At the end of cells, wrap-around to the other end for infinite scrolling.",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "au_time",
+        "min": 0,
+        "max": 30,
+        "step": 0.5,
+        "label": "Autoplay Speed in second.",
+        "info": "Set is '0' to disable autoplay.",
+        "unit": "sec",
+        "default": 0
+      },
+      {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "Enable Autoplay?",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "au_hover",
+        "label": "Pause Autoplay On Hover?",
+        "info": "Auto-playing will pause when the user hovers over the carousel.",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "== Prev Next Button, Page Dot Settings"
+      },
+      {
+        "type": "paragraph",
+        "content": "—————————————————"
+      },
+      {
+        "type": "paragraph",
+        "content": "Prev Next Button:"
+      },
+      {
+        "type": "checkbox",
+        "id": "button",
+        "label": "Enable Prev Next Button?",
+        "info": "Creates and enables previous & next buttons.",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "btn_vi",
+        "label": "Visible:",
+        "default": "1",
+        "options": [
+          {
+            "value": "1",
+            "label": "always"
+          },
+          {
+            "value": "2",
+            "label": "Only hover"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "btn_owl",
+        "label": "Style",
+        "default": "1",
+        "options": [
+          {
+            "value": "1",
+            "label": "Style 1"
+          },
+          {
+            "value": "2",
+            "label": "Style 2"
+          },
+          {
+            "value": "3",
+            "label": "Style 3"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "btn_color",
+        "label": "Color",
+        "default": "2",
+        "options": [
+          {
+            "value": "0",
+            "label": "Transparent"
+          },
+          {
+            "value": "1",
+            "label": "Gray"
+          },
+          {
+            "value": "2",
+            "label": "White"
+          },
+          {
+            "value": "3",
+            "label": "Primary"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": "—————————————————"
+      },
+      {
+        "type": "paragraph",
+        "content": "Page Dot:"
+      },
+      {
+        "type": "checkbox",
+        "id": "dot",
+        "label": "Enable Page Dot?",
+        "info": "Creates and enables page dots.",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "dot_owl",
+        "label": "Style",
+        "default": "2",
+        "options": [
+          {
+            "value": "1",
+            "label": "Style 1"
+          },
+          {
+            "value": "2",
+            "label": "Style 2"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "dot_color",
+        "label": "Color",
+        "default": "2",
+        "options": [
+          {
+            "value": "1",
+            "label": "Dark"
+          },
+          {
+            "value": "2",
+            "label": "Light"
+          },
+          {
+            "value": "3",
+            "label": "Primary"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "== Design Options"
+      },
+      {
+        "type": "select",
+        "id": "layout",
+        "default": "nt_full",
+        "label": "Layout",
+        "options": [
+            { "value": "container", "label": "Container"},
+            { "value": "wrap", "label": "Wrapped Container"},
+            { "value": "nt_full", "label": "Full Width"}
+        ]
+      },
+      {
+        "type": "text",
+        "id": "mg",
+        "label": "Margin",
+        "info":"Margin top, margin right, margin bottom, margin left. If you not use to blank",
+        "placeholder": "50px,,50px,"
+      },
+      {
+        "type": "text",
+        "id": "pd",
+        "label": "Padding",
+        "info":"Padding top, padding right, padding bottom, padding left. If you not use to blank",
+        "default": "60px,,60px,",
+        "placeholder": "50px,,50px,"
+      },
+     {
+        "type": "header",
+        "content": "== Design Mobile Options"
+      },
+      {
+        "type": "text",
+        "id": "mg_mb",
+        "label": "Margin",
+        "placeholder": "50px,,50px,"
+      },
+      {
+        "type": "text",
+        "id": "pd_mb",
+        "label": "Padding",
+        "default": "40px,,40px,",
+        "placeholder": "50px,,50px,"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "review",
+        "name": "Review",
+        "settings": [
+          {
+            "type": "select",
+            "id": "platform",
+            "label": "Platform",
+            "default": "google",
+            "options": [
+              {
+                "value": "google",
+                "label": "Google"
+              },
+              {
+                "value": "trustpilot",
+                "label": "Trustpilot"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "id": "reviewer_name",
+            "label": "Reviewer Name",
+            "default": "Customer Name"
+          },
+          {
+            "type": "image_picker",
+            "id": "profile_image",
+            "label": "Profile Image",
+            "info": "Optional: Upload profile picture. If not provided, will show initial letter."
+          },
+          {
+            "type": "color",
+            "id": "profile_bg_color",
+            "label": "Profile Icon Background Color",
+            "info": "Used when no profile image is provided",
+            "default": "#4285F4"
+          },
+          {
+            "type": "range",
+            "id": "rating",
+            "min": 1,
+            "max": 5,
+            "step": 1,
+            "label": "Rating",
+            "default": 5
+          },
+          {
+            "type": "text",
+            "id": "time_ago",
+            "label": "Time Since Review",
+            "default": "2 days ago",
+            "info": "e.g., '2 days ago', '1 week ago', '1 month ago'"
+          },
+          {
+            "type": "richtext",
+            "id": "review_text",
+            "label": "Review Text",
+            "default": "<p>Add your customer review text here. This is a great way to showcase positive feedback from your customers.</p>"
+          },
+          {
+            "type": "url",
+            "id": "read_more_link",
+            "label": "Read More Link (Optional)"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Reviews Carousel",
+        "category": "V. Text",
+        "blocks": [
+          {"type": "review"},
+          {"type": "review"},
+          {"type": "review"},
+          {"type": "review"},
+          {"type": "review"}
+        ]
+      }
+    ]
+  }
+{% endschema %}
+<style>
+    .reviews_carousel_wrapper {
+  padding: 0;
+  overflow: hidden;
+}
+
+.reviews_carousel {
+  padding: 20px 0 40px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.reviews_carousel_wrapper.nt_full .reviews_carousel {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.review_card_cell {
+  margin-right: 20px;
+  margin-left: 0;
+  flex-shrink: 0;
+}
+
+.review_card_cell:first-child {
+  margin-left: 0;
+}
+
+.review_card {
+  background: #ffffff;
+  padding: 24px;
+  height: 100%;
+  display: flex !important;
+  flex-direction: column;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.review_card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.platform_logo {
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.platform_logo svg {
+  height: 20px;
+  width: auto;
+}
+
+.review_card_body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.reviewer_info {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.reviewer_avatar {
+  flex-shrink: 0;
+}
+
+.profile_image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile_initial {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
+.reviewer_details {
+  flex: 1;
+}
+
+.reviewer_name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #000000;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.review_rating {
+  margin-bottom: 4px;
+}
+
+.review_rating .star {
+  font-size: 16px;
+  margin-right: 2px;
+}
+
+/* Google Reviews - Orange/Yellow Stars */
+.review_rating.rating_platform_google .star.filled {
+  color: #FFA500;
+}
+
+.review_rating.rating_platform_google .star:not(.filled) {
+  color: #E0E0E0;
+}
+
+/* Trustpilot Reviews - Green Stars */
+.review_rating.rating_platform_trustpilot .star.filled {
+  color: #00B67A;
+}
+
+.review_rating.rating_platform_trustpilot .star:not(.filled) {
+  color: #E0E0E0;
+}
+
+.review_time {
+  font-size: 12px;
+  color: #666666;
+  margin-top: 4px;
+}
+
+.review_content {
+  flex: 1;
+  font-size: 11px;
+  line-height: 1.6;
+  color: #333333;
+}
+
+.review_content p {
+  margin-bottom: 12px;
+}
+
+.review_content p:last-child {
+  margin-bottom: 0;
+}
+
+.read_more_link {
+  display: inline-block;
+  margin-top: 8px;
+  color: #4285F4;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.read_more_link:hover {
+  color: #1a73e8;
+  text-decoration: underline;
+}
+
+/* Flickity Carousel Customization for Reviews */
+.nt_se_{{sid}} *:focus,
+.reviews_carousel .flickity-viewport,
+.reviews_carousel .flickity-slider,
+.reviews_carousel:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.reviews_carousel .flickity-viewport {
+  overflow: visible;
+  margin-left: -20px;
+  margin-right: -20px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.reviews_carousel_wrapper.nt_full .reviews_carousel .flickity-viewport {
+  margin-left: -40px;
+  margin-right: -40px;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.reviews_carousel .flickity-slider {
+  display: flex;
+  align-items: stretch;
+}
+
+.reviews_carousel .flickity-page-dots {
+  bottom: -30px;
+}
+
+.reviews_carousel .flickity-prev-next-button {
+  background: #0000001a !important;
+  border: none;
+  box-shadow: none;
+  opacity: 1 !important;
+  transform: scale(1) !important;
+  visibility: visible !important;
+  border-radius:0 !important;
+}
+.nt_full .flickity-prev-next-button.previous{
+left:0 !important;
+}
+
+.nt_full .flickity-prev-next-button.next{
+right:0 !important;}
+
+l .btn_owl_3 .flickity-prev-next-button:before {
+      -webkit-transform: none !important;
+    transform: none !important;
+}
+.flickity-prev-next-button:before {
+  font-size:28px !important;
+  width:auto !important ;
+}
+
+
+.reviews_carousel .flickity-prev-next-button:hover {
+  background: #ffffff;
+}
+
+.reviews_carousel .flickity-prev-next-button .arrow {
+  fill: #1a4d3a;
+}
+
+.reviews_carousel .flickity-page-dots .dot {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.reviews_carousel .flickity-page-dots .dot.is-selected {
+  background: #ffffff;
+}
+
+/*---------------- Custom CSS for only desktop -------------------*/
+@media (min-width: 1025px) {
+  /* Card width is set inline from section settings */
+}
+
+/*---------------- Custom CSS for tablet, mobile -------------------*/
+@media (max-width: 1024px) {
+  .review_card_cell {
+    width: 350px !important;
+  }
+  
+  .reviews_carousel_wrapper {
+    padding: 0;
+  }
+  
+  .reviews_carousel {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  .reviews_carousel .flickity-viewport {
+    margin-left: -15px;
+    margin-right: -15px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  .reviews_carousel_wrapper.nt_full .reviews_carousel {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  .reviews_carousel_wrapper.nt_full .reviews_carousel .flickity-viewport {
+    margin-left: -20px;
+    margin-right: -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+/*---------------- Custom CSS for only tablet -------------------*/
+@media (min-width: 768px) and (max-width: 1024px) {
+  .review_card_cell {
+    width: 320px !important;
+  }
+}
+
+/*---------------- Custom CSS for only mobile -------------------*/
+@media (max-width: 767px){
+  .review_card_cell {
+    width: 85% !important;
+    max-width: 350px;
+  }
+  
+  .reviews_carousel_wrapper {
+    padding: 0;
+  }
+  
+  .reviews_carousel {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  .reviews_carousel .flickity-viewport {
+    margin-left: -15px;
+    margin-right: -15px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  .reviews_carousel_wrapper.nt_full .reviews_carousel {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  .reviews_carousel_wrapper.nt_full .reviews_carousel .flickity-viewport {
+    margin-left: -15px;
+    margin-right: -15px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  .review_card {
+    padding: 20px;
+  }
+  
+  .reviewer_name {
+    font-size: 13px;
+  }
+  
+  .review_content {
+    font-size: 13px;
+  }
+}
+
+.platform_logo img {
+    height: auto;
+    max-width: 31%;
+    vertical-align: middle;
+}
+.custom-review-common{
+  display: flex;
+}
+</style>

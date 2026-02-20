@@ -1,0 +1,355 @@
+{% comment %}
+30% Media (Video/Richtext) + 70% Overlap Swiper Slider
+If media empty → slider becomes 100%
+Swiper arrows duplicate FIXED (section.id based)
+{% endcomment %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+
+{% liquid
+  assign has_media = false
+  if section.settings.media_video != blank or section.settings.media_text != blank
+    assign has_media = true
+  endif
+%}
+
+<section class="media-slider-section width-{{ section.settings.section_width }} media-slider-{{ section.id }}">
+  <div class="media-slider-container">
+    {% if section.settings.heading != blank or section.settings.subheading != blank %}
+  <div class="media-slider-header">
+    {% if section.settings.heading != blank %}
+      <h2 class="media-slider-heading">
+        <strong>{{ section.settings.heading }}</strong>
+      </h2>
+    {% endif %}
+
+    {% if section.settings.subheading != blank %}
+      <div class="media-slider-subheading">
+        {{ section.settings.subheading }}
+      </div>
+    {% endif %}
+  </div>
+{% endif %}
+
+    <div class="media-slider-wrapper
+      {% unless has_media %}no-media{% endunless %}
+      media-{{ section.settings.media_position }}">
+
+      {% if has_media %}
+      <!-- 30% MEDIA -->
+      <div class="media-area">
+        {% if section.settings.media_video != blank %}
+          {{ section.settings.media_video | video_tag:
+            autoplay: true,
+            loop: true,
+            muted: true,
+            controls: false,
+            playsinline: true
+          }}
+        {% else %}
+          <div class="media-text">
+            {{ section.settings.media_text }}
+          </div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- 70% / 100% SLIDER -->
+      <div class="slider-area">
+        <div class="swiper overlapSwiper-{{ section.id }}">
+          <div class="swiper-wrapper">
+            {% for block in section.blocks %}
+              <div class="swiper-slide">
+                {% if block.settings.image != blank %}
+                  <div class="zoom-container">
+                    <img
+                      src="{{ block.settings.image | image_url: width: 800 }}"
+                      alt="{{ block.settings.image.alt | escape }}"
+                    >
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+            {% comment %} Duplicate slides for seamless looping when slidesPerView is high {% endcomment %}
+            {% if section.blocks.size > 0 and section.blocks.size <= 6 %}
+              {% for block in section.blocks %}
+                <div class="swiper-slide">
+                  {% if block.settings.image != blank %}
+                    <div class="zoom-container">
+                      <img
+                        src="{{ block.settings.image | image_url: width: 800 }}"
+                        alt="{{ block.settings.image.alt | escape }}"
+                      >
+                    </div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            {% endif %}
+          </div>
+
+          {% if section.settings.show_navigation %}
+            <div class="swiper-button-prev swiper-prev-{{ section.id }}"></div>
+            <div class="swiper-button-next swiper-next-{{ section.id }}"></div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+.media-slider-container {
+  margin: 0 auto;
+  max-width: 1440px;
+  padding: 0;
+}
+
+.width-full .media-slider-container {
+  max-width: 1990px;
+  padding: 0 40px;
+}
+
+.media-slider-wrapper {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+.swiper-navigation-icon{
+  display: none !important;
+}
+/* Position */
+.media-left { flex-direction: row; }
+.media-right { flex-direction: row-reverse; }
+
+/* 30% Media */
+.media-area {
+  width: 30%;
+}
+.media-area video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.media-text {
+  padding: 40px;
+}
+
+/* 70% Slider */
+.slider-area {
+  width: 70%;
+  overflow: hidden;
+}
+
+/* No media */
+.no-media .slider-area {
+  width: 100%;
+}
+.no-media .media-area {
+  display: none;
+}
+
+/* OVERLAP SLIDER */
+.overlapSwiper-{{ section.id }} {
+  overflow: visible;
+}
+
+.overlapSwiper-{{ section.id }} .swiper-slide {
+  transition: transform 0.4s ease;
+}
+
+.overlapSwiper-{{ section.id }} .swiper-slide img {
+  width: 100%;
+  border-radius: 16px;
+}
+
+.overlapSwiper-{{ section.id }} .swiper-slide-active {
+  transform: scale(1.05);
+  z-index: 5;
+}
+
+/* Zoom In/Out Effect */
+.zoom-container {
+  overflow: hidden;
+  border-radius: 16px;
+  position: relative;
+  width: 100%;
+}
+
+.zoom-container img {
+  display: block;
+  width: 100%;
+  transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.zoom-container:hover img {
+  transform: scale(1.15);
+}
+.media-slider-header {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.width-full .media-slider-header {
+  max-width: 1990px;
+  padding: 0 40px;
+}
+
+.media-slider-heading {
+  font-size: 36px;
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+
+.media-slider-subheading {
+  font-size: 16px;
+  opacity: 0.8;
+}
+
+
+/* Mobile */
+@media (max-width: 768px) {
+  .width-full .media-slider-container {
+    padding: 0 20px;
+  }
+  .media-slider-wrapper {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .media-area,
+  .slider-area {
+    width: 100%;
+  }
+  .overlapSwiper-{{ section.id }} .swiper-slide {
+    /* margin-right: -40px; */
+  }
+
+    .media-slider-heading {
+    font-size: 26px;
+  }
+}
+</style>
+
+<script>
+  new Swiper(".overlapSwiper-{{ section.id }}", {
+    slidesPerView: {{ section.settings.slides_desktop }},
+    spaceBetween: 30,
+    loop: true,
+    loopedSlides: 5,
+    navigation: {
+      nextEl: ".swiper-next-{{ section.id }}",
+      prevEl: ".swiper-prev-{{ section.id }}"
+    },
+    breakpoints: {
+      0: { slidesPerView: {{ section.settings.slides_mobile }} },
+      768: { slidesPerView: {{ section.settings.slides_desktop | minus: 1 | at_least: 2 }} },
+      1024: { slidesPerView: {{ section.settings.slides_desktop }} }
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Overlap Slider",
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section Width",
+      "options": [
+        { "value": "container", "label": "Container (1440px)" },
+        { "value": "full", "label": "Full Width (1990px)" }
+      ],
+      "default": "full"
+    },
+    {
+  "type": "richtext",
+  "id": "heading",
+  "label": "Heading",
+  "default": "<p>Our Featured Collection</p>"
+},
+{
+  "type": "richtext",
+  "id": "subheading",
+  "label": "Subheading",
+  "default": "<p>Discover premium designs curated just for you.</p>"
+},
+    {
+      "type": "select",
+      "id": "media_position",
+      "label": "Media Position",
+      "default": "left",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ]
+    },
+    {
+      "type": "video",
+      "id": "media_video",
+      "label": "Media Video (Optional)"
+    },
+    {
+      "type": "richtext",
+      "id": "media_text",
+      "label": "Media Rich Text"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_navigation",
+      "label": "Show Navigation Arrows",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "slides_desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "label": "Slides per view (Desktop)",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "slides_mobile",
+      "min": 1,
+      "max": 3,
+      "step": 0.1,
+      "label": "Slides per view (Mobile)",
+      "default": 1.4
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Slide Image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Overlap Slider",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" }
+      ],
+      "settings": {
+        "slides_desktop": 5,
+        "show_navigation": true
+      }
+    }
+  ]
+}
+{% endschema %}

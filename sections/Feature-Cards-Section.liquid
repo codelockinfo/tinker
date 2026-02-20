@@ -1,0 +1,142 @@
+{% comment %}
+  Feature Cards with Overlay Icon
+  Shadow + Hover + Floating Icon
+{% endcomment %}
+
+<style>
+  .feature-cards {
+    padding: 70px 0 30px;
+    background: #ffffff;
+  }
+  .feature-cards .container {
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+  .feature-cards__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  .feature-card {
+    position: relative;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 55px 20px 30px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+    {% comment %} border: 1px solid #f1e2cf; {% endcomment %}
+  }
+
+  .feature-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+  }
+
+  /* Floating Icon */
+  .feature-card__icon {
+    position: absolute;
+    top: -34px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background:rgb(223, 232, 255);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    {% comment %} border: 1px solid #ffffff; {% endcomment %}
+    border-bottom: 3px solid #286da48f;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  .feature-card__icon img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+  }
+
+  .feature-card h4 {
+    font-size: 18px;
+    font-weight: 500;
+    color: #000000;
+    margin: 0;
+  }
+
+  /* Responsive */
+  @media (max-width: 992px) {
+    .feature-cards__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 576px) {
+    .feature-cards__grid {
+      grid-template-columns: 1fr;
+      gap: 50px;
+    }
+  }
+</style>
+
+<section class="feature-cards">
+    <div class="container">
+  <div class="page-width">
+    <div class="feature-cards__grid">
+      {% for block in section.blocks %}
+        <div class="feature-card" {{ block.shopify_attributes }}>
+          {% if block.settings.icon != blank %}
+            <div class="feature-card__icon">
+              <img
+                src="{{ block.settings.icon | image_url: width: 64 }}"
+                alt="{{ block.settings.title }}"
+                loading="lazy"
+              >
+            </div>
+          {% endif %}
+          <h4>{{ block.settings.title }}</h4>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+</section>
+
+{% schema %}
+{
+  "name": "Feature Cards",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature Card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "1 Year Warranty"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Feature Cards Overlay",
+      "blocks": [
+        { "type": "feature" },
+        { "type": "feature" },
+        { "type": "feature" },
+        { "type": "feature" }
+      ]
+    }
+  ]
+}
+{% endschema %}

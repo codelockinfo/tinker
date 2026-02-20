@@ -1,0 +1,247 @@
+{% comment %}
+Customer & Product Details Form with Layout Control
+{% endcomment %}
+
+<section
+  class="cp-form-section layout-{{ section.settings.layout }}"
+  style="
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <div class="cp-form-wrapper">
+
+    {% form 'contact', class: 'cp-form', enctype: 'multipart/form-data' %}
+
+      <!-- CUSTOMER DETAILS -->
+      <div class="form-block">
+        <h3 class="block-title">Customer Details</h3>
+        <p class="block-subtitle">Please fill all customer details</p>
+
+        <div class="form-grid">
+          <input type="text" name="contact[name]" placeholder="Name" required>
+          <input type="email" name="contact[email]" placeholder="Email" required>
+
+          <input type="tel" name="contact[phone]" placeholder="Phone">
+
+          <div class="radio-group">
+            <span class="radio-title">Mode of Contact <span>*</span></span>
+
+            <div class="radio-options">
+                <label class="radio-option">
+                <input type="radio" name="contact[mode_of_contact]" value="Yes" required>
+                <span>Yes</span>
+                </label>
+
+                <label class="radio-option">
+                <input type="radio" name="contact[mode_of_contact]" value="No">
+                <span>No</span>
+                </label>
+            </div>
+          </div>
+
+
+          <input type="text" name="contact[address_1]" placeholder="Address Line 1">
+          <input type="text" name="contact[address_2]" placeholder="Address Line 2">
+
+          <input type="text" name="contact[city]" placeholder="City">
+          <input type="text" name="contact[state]" placeholder="State">
+
+          <input type="text" name="contact[zip]" placeholder="Zip">
+          <input type="text" name="contact[country]" placeholder="Select Country">
+        </div>
+      </div>
+
+      <!-- PRODUCT DETAILS -->
+      <div class="form-block">
+        <h3 class="block-title">Product Details</h3>
+        <p class="block-subtitle">Please fill all Product Details</p>
+
+        <div class="form-grid">
+          <input type="text" name="contact[model_name]" placeholder="Model Name">
+
+          <input type="date" name="contact[purchase_date]">
+          <input type="file" name="contact[invoice]" accept=".jpg,.png,.pdf">
+
+          <input type="text" name="contact[dealer_name]" placeholder="Dealer Name">
+        </div>
+      </div>
+
+      <button type="submit" class="cp-submit-btn">
+        Submit Your Request
+      </button>
+
+      {% if form.posted_successfully? %}
+        <p class="form-success">Thank you! Your request has been submitted.</p>
+      {% endif %}
+
+      {% if form.errors %}
+        <p class="form-error">Please check the form and try again.</p>
+      {% endif %}
+
+    {% endform %}
+
+  </div>
+</section>
+
+<style>
+/* Layouts */
+.layout-container .cp-form-wrapper {
+  max-width: 1400px;
+}
+
+.layout-full .cp-form-wrapper {
+  max-width: 100%;
+}
+
+.cp-form-wrapper {
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.cp-form {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.block-title {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+.block-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 24px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.form-grid input,
+.form-grid input[type="file"] {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: #fff;
+  font-size: 14px;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.radio-options {
+  display: flex;
+  gap: 24px; /* space between Yes / No */
+}
+
+.radio-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px; /* space between radio & text */
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.radio-option input {
+  margin: 0;
+}
+
+.radio-title {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.radio-title span {
+  color: red;
+}
+
+.cp-submit-btn {
+  align-self: flex-start;
+  padding: 14px 32px;
+  background: #146dd4;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cp-submit-btn:hover {
+  background: rgb(15, 99, 196);
+}
+
+.form-success,
+.form-error {
+  margin-top: 10px;
+}
+
+.form-success { color: green; }
+.form-error { color: red; }
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .cp-submit-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Customer & Product Form",
+  "settings": [
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Section Layout",
+      "options": [
+        { "value": "container", "label": "Container" },
+        { "value": "full", "label": "Full Width" }
+      ],
+      "default": "container"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "default": 80
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer Product Details Form"
+    }
+  ]
+}
+{% endschema %}

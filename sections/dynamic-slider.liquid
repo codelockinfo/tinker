@@ -1,0 +1,709 @@
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+{% style %}
+.dynamic-swiper[data-section-id="{{ section.id }}"] {
+  width: 100%;
+}
+
+.dynamic-swiper[data-section-id="{{ section.id }}"].full {
+  max-width: 1990px;
+  margin: auto;
+}
+
+.dynamic-swiper[data-section-id="{{ section.id }}"].container {
+  max-width: 1440px;
+  margin: auto;
+}
+
+.dynamic-swiper[data-section-id="{{ section.id }}"] .swiper-slide {
+  position: relative;
+}
+
+.dynamic-swiper[data-section-id="{{ section.id }}"] .swiper-slide img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .dynamic-swiper[data-section-id="{{ section.id }}"] .swiper-slide img {
+    height: auto;
+  }
+}
+
+.dynamic-swiper[data-section-id="{{ section.id }}"] .slide-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  padding: 40px;
+  text-align: left;
+}
+
+.dynamic-swiper[data-section-id="{{ section.id }}"] .align-left-top { justify-content:flex-start; align-items:flex-start; text-align:left; }
+.dynamic-swiper[data-section-id="{{ section.id }}"] .align-left-center { justify-content:flex-start; align-items:center; text-align:left; }
+.dynamic-swiper[data-section-id="{{ section.id }}"] .align-left-bottom { justify-content:flex-start; align-items:flex-end; text-align:left; }
+
+.dynamic-swiper[data-section-id="{{ section.id }}"] .align-center-top { justify-content:center; align-items:flex-start; text-align:center; }
+.dynamic-swiper[data-section-id="{{ section.id }}"] .align-center-center { justify-content:center; align-items:center; text-align:center; }
+.dynamic-swiper[data-section-id="{{ section.id }}"] .align-center-bottom { justify-content:center; align-items:flex-end; text-align:center; }
+
+.dynamic-swiper[data-section-id="{{ section.id }}"] .align-right-top { justify-content:flex-end; align-items:flex-start; text-align:right; }
+.dynamic-swiper[data-section-id="{{ section.id }}"] .align-right-center { justify-content:flex-end; align-items:center; padding: 0 6% 0 0; }
+.dynamic-swiper[data-section-id="{{ section.id }}"] .align-right-bottom { justify-content:flex-end; align-items:flex-end; text-align:right; }
+
+.dynamic-swiper[data-section-id="{{ section.id }}"] .slide-inner .text-above-heading {
+  font-size: {{ section.settings.text_above_heading_size }}px;
+  color: {{ section.settings.text_above_heading_color }};
+  margin: 0 0 10px 0;
+  display: block;
+}
+
+.dynamic-swiper[data-section-id="{{ section.id }}"] .slide-inner h2 {
+  font-size: {{ section.settings.heading_size }}px;
+  color: {{ section.settings.heading_color }};
+  margin: 0 0 15px 0;
+  font-weight: bold;
+}
+
+.dynamic-swiper[data-section-id="{{ section.id }}"] .slide-inner p {
+  font-size: {{ section.settings.subheading_size }}px;
+  color: {{ section.settings.subheading_color }};
+  margin: 0 0 15px 0;
+}
+
+.dynamic-swiper[data-section-id="{{ section.id }}"] .slide-inner a {
+  display: inline-block;
+  margin-top: 15px;
+  padding: {{ section.settings.button_padding_vertical }}px {{ section.settings.button_padding_horizontal }}px;
+  background: {{ section.settings.button_bg }};
+  color: {{ section.settings.button_text }};
+  text-decoration: none;
+  border: 2px solid {{ section.settings.button_border_color }};
+  border-radius: {{ section.settings.button_border_radius }}px;
+}
+
+@media (max-width: 768px) {
+  .dynamic-swiper[data-section-id="{{ section.id }}"] .slide-inner .text-above-heading {
+    font-size: {{ section.settings.text_above_heading_size_mobile }}px;
+    color: {{ section.settings.text_above_heading_color_mobile }};
+  }
+
+  .dynamic-swiper[data-section-id="{{ section.id }}"] .slide-inner h2 {
+    font-size: {{ section.settings.heading_size_mobile }}px;
+    color: {{ section.settings.heading_color_mobile }};
+  }
+
+  .dynamic-swiper[data-section-id="{{ section.id }}"] .slide-inner p {
+    font-size: {{ section.settings.subheading_size_mobile }}px;
+    color: {{ section.settings.subheading_color_mobile }};
+  }
+
+  .dynamic-swiper[data-section-id="{{ section.id }}"] .slide-inner a {
+    color: {{ section.settings.button_text_color_mobile }};
+  }
+
+  .dynamic-swiper[data-section-id="{{ section.id }}"] .slide-content.mobile-alignment-align-left-top { justify-content:flex-start !important; align-items:flex-start !important; text-align:left !important; }
+  .dynamic-swiper[data-section-id="{{ section.id }}"] .slide-content.mobile-alignment-align-left-center { justify-content:flex-start !important; align-items:center !important; text-align:left !important; }
+  .dynamic-swiper[data-section-id="{{ section.id }}"] .slide-content.mobile-alignment-align-left-bottom { justify-content:flex-start !important; align-items:flex-end !important; text-align:left !important; }
+  .dynamic-swiper[data-section-id="{{ section.id }}"] .slide-content.mobile-alignment-align-center-top { justify-content:center !important; align-items:flex-start !important; text-align:center !important; }
+  .dynamic-swiper[data-section-id="{{ section.id }}"] .slide-content.mobile-alignment-align-center-center { justify-content:center !important; align-items:center !important; text-align:center !important; }
+  .dynamic-swiper[data-section-id="{{ section.id }}"] .slide-content.mobile-alignment-align-center-bottom { justify-content:center !important; align-items:flex-end !important; text-align:center !important; }
+  .dynamic-swiper[data-section-id="{{ section.id }}"] .slide-content.mobile-alignment-align-right-top { justify-content:flex-end !important; align-items:flex-start !important; text-align:right !important; }
+  .dynamic-swiper[data-section-id="{{ section.id }}"] .slide-content.mobile-alignment-align-right-center { justify-content:flex-end !important; align-items:center !important; text-align:right !important; }
+  .dynamic-swiper[data-section-id="{{ section.id }}"] .slide-content.mobile-alignment-align-right-bottom { justify-content:flex-end !important; align-items:flex-end !important; text-align:right !important; }
+}
+{% endstyle %}
+
+<div class="dynamic-swiper {{ section.settings.container_width }}" 
+     data-section-id="{{ section.id }}"
+     data-show-pagination="{{ section.settings.show_pagination }}"
+     data-show-navigation="{{ section.settings.show_navigation }}"
+     data-button-visibility="{{ section.settings.button_visibility }}"
+     data-arrow-style="{{ section.settings.arrow_style }}"
+     data-show-arrows-mobile="{{ section.settings.show_arrows_mobile }}">
+  <div class="swiper mySwiper-{{ section.id }}">
+    <div class="swiper-wrapper">
+      {% for block in section.blocks %}
+        <div class="swiper-slide">
+          {% if block.settings.image %}
+            {% if block.settings.mobile_image %}
+              <img 
+                class="desktop-image" 
+                src="{{ block.settings.image | image_url: width: 2000 }}" 
+                alt="{{ block.settings.heading | escape }}"
+              >
+              <img 
+                class="mobile-image" 
+                src="{{ block.settings.mobile_image | image_url: width: 1000 }}" 
+                alt="{{ block.settings.heading | escape }}"
+              >
+            {% else %}
+              <img 
+                class="swiper-slide-image" 
+                src="{{ block.settings.image | image_url: width: 2000 }}" 
+                alt="{{ block.settings.heading | escape }}"
+              >
+            {% endif %}
+          {% endif %}
+
+          <div class="slide-content {{ block.settings.alignment }} mobile-alignment-{{ block.settings.alignment_mobile }}">
+            <div class="slide-inner">
+              {% if block.settings.text_above_heading != blank %}
+                <span class="text-above-heading">{{ block.settings.text_above_heading }}</span>
+              {% endif %}
+              <h2>{{ block.settings.heading }}</h2>
+              <p>{{ block.settings.subheading }}</p>
+              {% if block.settings.button_text != blank %}
+                <a href="{{ block.settings.button_link }}">
+                  {{ block.settings.button_text }}
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    {% if section.settings.show_pagination %}
+      <div class="swiper-pagination swiper-pagination-{{ section.id }}"></div>
+    {% endif %}
+    {% if section.settings.show_navigation %}
+      <div class="swiper-button-next swiper-button-next-{{ section.id }}"></div>
+      <div class="swiper-button-prev swiper-button-prev-{{ section.id }}"></div>
+    {% endif %}
+  </div>
+</div>
+
+{% style %}
+.dynamic-swiper[data-section-id="{{ section.id }}"] .swiper-slide-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .dynamic-swiper[data-section-id="{{ section.id }}"] .swiper-slide-image {
+    height: auto;
+  }
+}
+
+.dynamic-swiper[data-section-id="{{ section.id }}"] .mobile-image {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .dynamic-swiper[data-section-id="{{ section.id }}"] .desktop-image {
+    display: none !important;
+  }
+  .dynamic-swiper[data-section-id="{{ section.id }}"] .mobile-image {
+    display: block !important;
+  }
+}
+
+{% if section.settings.show_pagination == false %}
+  .swiper-pagination-{{ section.id }} {
+    display: none !important;
+  }
+{% endif %}
+
+{% if section.settings.show_navigation == false %}
+  .swiper-button-next-{{ section.id }},
+  .swiper-button-prev-{{ section.id }} {
+    display: none !important;
+  }
+{% endif %}
+
+.dynamic-swiper[data-section-id="{{ section.id }}"] .swiper-button-next-{{ section.id }},
+.dynamic-swiper[data-section-id="{{ section.id }}"] .swiper-button-prev-{{ section.id }} {
+    background-color: {{ section.settings.button_bg_color }};
+    padding: 10px;
+    width: 42px;
+    height: 42px;
+    border: 2px solid {{ section.settings.arrow_button_border_color }};
+    color: {{ section.settings.arrow_color }};
+    z-index: 10;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+/* Arrow Style 1: Square */
+.dynamic-swiper[data-section-id="{{ section.id }}"][data-arrow-style="style1"] .swiper-button-next-{{ section.id }},
+.dynamic-swiper[data-section-id="{{ section.id }}"][data-arrow-style="style1"] .swiper-button-prev-{{ section.id }} {
+    border-radius: 0;
+}
+
+/* Arrow Style 2: Square with border radius 33% */
+.dynamic-swiper[data-section-id="{{ section.id }}"][data-arrow-style="style2"] .swiper-button-next-{{ section.id }},
+.dynamic-swiper[data-section-id="{{ section.id }}"][data-arrow-style="style2"] .swiper-button-prev-{{ section.id }} {
+    border-radius: 33%;
+}
+
+/* Arrow Style 3: Round */
+.dynamic-swiper[data-section-id="{{ section.id }}"][data-arrow-style="style3"] .swiper-button-next-{{ section.id }},
+.dynamic-swiper[data-section-id="{{ section.id }}"][data-arrow-style="style3"] .swiper-button-prev-{{ section.id }} {
+    border-radius: 50%;
+}
+
+.dynamic-swiper[data-section-id="{{ section.id }}"] .swiper-button-next-{{ section.id }}::after,
+.dynamic-swiper[data-section-id="{{ section.id }}"] .swiper-button-prev-{{ section.id }}::after {
+  font-size: 20px;
+  color: {{ section.settings.arrow_color }};
+  transition: color 0.3s ease;
+}
+
+/* Hover effects */
+.dynamic-swiper[data-section-id="{{ section.id }}"] .swiper-button-next-{{ section.id }}:hover,
+.dynamic-swiper[data-section-id="{{ section.id }}"] .swiper-button-prev-{{ section.id }}:hover {
+    background-color: {{ section.settings.button_bg_color_hover }};
+    border-color: {{ section.settings.button_bg_color_hover }};
+    transform: scale(1.1);
+}
+
+.dynamic-swiper[data-section-id="{{ section.id }}"] .swiper-button-next-{{ section.id }}:hover::after,
+.dynamic-swiper[data-section-id="{{ section.id }}"] .swiper-button-prev-{{ section.id }}:hover::after {
+  color: {{ section.settings.arrow_color_hover }};
+}
+
+/* Show buttons on hover only */
+{% if section.settings.button_visibility == 'hover' %}
+.dynamic-swiper[data-section-id="{{ section.id }}"] .swiper-button-next-{{ section.id }},
+.dynamic-swiper[data-section-id="{{ section.id }}"] .swiper-button-prev-{{ section.id }} {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+}
+
+.dynamic-swiper[data-section-id="{{ section.id }}"]:hover .swiper-button-next-{{ section.id }},
+.dynamic-swiper[data-section-id="{{ section.id }}"]:hover .swiper-button-prev-{{ section.id }} {
+    opacity: 1;
+    visibility: visible;
+}
+{% endif %}
+
+/* Hide arrows on mobile */
+{% if section.settings.show_arrows_mobile == false %}
+@media (max-width: 768px) {
+  .dynamic-swiper[data-section-id="{{ section.id }}"] .swiper-button-next-{{ section.id }},
+  .dynamic-swiper[data-section-id="{{ section.id }}"] .swiper-button-prev-{{ section.id }} {
+    display: none !important;
+  }
+}
+{% endif %}
+{% endstyle %}
+
+<script>
+(function() {
+  var sectionId = '{{ section.id }}';
+  
+  function initSwiper() {
+    var container = document.querySelector('[data-section-id="' + sectionId + '"]');
+    if (!container) return;
+    
+    const swiperElement = container.querySelector('.mySwiper-' + sectionId);
+    if (!swiperElement) return;
+    
+    // Check if Swiper is already initialized
+    if (swiperElement.swiper) {
+      swiperElement.swiper.destroy(true, true);
+    }
+    
+    const swiperConfig = {
+      loop: true,
+      spaceBetween: 0,
+      slidesPerView: 1
+    };
+    
+    var showPagination = container.getAttribute('data-show-pagination') === 'true';
+    var showNavigation = container.getAttribute('data-show-navigation') === 'true';
+    
+    if (showPagination) {
+      const paginationEl = container.querySelector('.swiper-pagination-' + sectionId);
+      if (paginationEl) {
+        swiperConfig.pagination = {
+          el: paginationEl,
+          clickable: true,
+          type: 'bullets'
+        };
+      }
+    }
+    
+    if (showNavigation) {
+      const nextEl = container.querySelector('.swiper-button-next-' + sectionId);
+      const prevEl = container.querySelector('.swiper-button-prev-' + sectionId);
+      if (nextEl && prevEl) {
+        swiperConfig.navigation = {
+          nextEl: nextEl,
+          prevEl: prevEl
+        };
+      }
+    }
+    
+    if (typeof Swiper !== 'undefined') {
+      new Swiper(swiperElement, swiperConfig);
+    } else {
+      setTimeout(initSwiper, 100);
+    }
+  }
+  
+  // Initialize on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSwiper);
+  } else {
+    setTimeout(initSwiper, 100);
+  }
+  
+  // Re-initialize when theme editor updates
+  if (typeof document.addEventListener !== 'undefined') {
+    document.addEventListener('shopify:section:load', function(event) {
+      if (event.detail.sectionId === sectionId) {
+        setTimeout(initSwiper, 100);
+      }
+    });
+  }
+})();
+</script>
+
+
+
+{% schema %}
+{
+  "name": "Dynamic Swiper Slider",
+  "settings": [
+    {
+      "type": "select",
+      "id": "container_width",
+      "label": "Container Width",
+      "options": [
+        { "value": "full", "label": "Full Width (1990px)" },
+        { "value": "container", "label": "Container (1440px)" }
+      ],
+      "default": "full"
+    },
+    {
+      "type": "header",
+      "content": "Text Above Heading Settings (Desktop)"
+    },
+    {
+      "type": "range",
+      "id": "text_above_heading_size",
+      "label": "Text Above Heading Font Size",
+      "min": 12,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "text_above_heading_color",
+      "label": "Text Above Heading Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Text Above Heading Settings (Mobile)"
+    },
+    {
+      "type": "range",
+      "id": "text_above_heading_size_mobile",
+      "label": "Text Above Heading Font Size (Mobile)",
+      "min": 12,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "text_above_heading_color_mobile",
+      "label": "Text Above Heading Color (Mobile)",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Heading Settings (Desktop)"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading Font Size",
+      "min": 20,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Heading Settings (Mobile)"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading Font Size (Mobile)",
+      "min": 16,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "heading_color_mobile",
+      "label": "Heading Color (Mobile)",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Subheading Settings (Desktop)"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "label": "Subheading Font Size",
+      "min": 14,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "Subheading Settings (Mobile)"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color_mobile",
+      "label": "Subheading Color (Mobile)",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_mobile",
+      "label": "Subheading Font Size (Mobile)",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Button Settings (Desktop)"
+    },
+    {
+      "type": "color",
+      "id": "button_bg",
+      "label": "Button Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text",
+      "label": "Button Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Button Settings (Mobile)"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color_mobile",
+      "label": "Button Text Color (Mobile)",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Button Border Color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Button Border Radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "button_padding_vertical",
+      "label": "Button Padding (Top/Bottom)",
+      "min": 5,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "button_padding_horizontal",
+      "label": "Button Padding (Left/Right)",
+      "min": 10,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 26
+    },
+
+    {
+      "type": "checkbox",
+      "id": "show_pagination",
+      "label": "Show Pagination",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_navigation",
+      "label": "Show Prev/Next Buttons",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "button_visibility",
+      "label": "Button Visibility",
+      "options": [
+        { "value": "static", "label": "Always Visible" },
+        { "value": "hover", "label": "Show on Hover" }
+      ],
+      "default": "static",
+      "info": "Choose whether navigation buttons are always visible or only appear on hover"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows_mobile",
+      "label": "Show Arrows on Mobile",
+      "default": true,
+      "info": "Toggle to show or hide navigation arrows on mobile devices"
+    },
+    {
+      "type": "header",
+      "content": "Arrow Style Settings"
+    },
+    {
+      "type": "select",
+      "id": "arrow_style",
+      "label": "Arrow Button Style",
+      "options": [
+        { "value": "style1", "label": "Style 1" },
+        { "value": "style2", "label": "Style 2" },
+        { "value": "style3", "label": "Style 3" }
+      ],
+      "default": "style2",
+      "info": "Choose the shape style for navigation arrow buttons"
+    },
+    {
+      "type": "header",
+      "content": "Arrow Button Colors"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "arrow_button_border_color",
+      "label": "Arrow Button Border Color",
+      "default": "#d0d0d0"
+    },
+    {
+      "type": "color",
+      "id": "arrow_color",
+      "label": "Arrow Color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Arrow Button Hover Colors"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color_hover",
+      "label": "Button Background Color (Hover)",
+      "default": "#d3b951"
+    },
+    {
+      "type": "color",
+      "id": "arrow_color_hover",
+      "label": "Arrow Color (Hover)",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Slide Image (Desktop)" },
+        { "type": "image_picker", "id": "mobile_image", "label": "Slide Image (Mobile - Optional)" },
+        { "type": "text", "id": "text_above_heading", "label": "Text Above Heading" },
+        { "type": "text", "id": "heading", "label": "Heading" },
+        { "type": "text", "id": "subheading", "label": "Subheading" },
+        { "type": "text", "id": "button_text", "label": "Button Text" },
+        { "type": "url", "id": "button_link", "label": "Button Link" },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": "Content Alignment (Desktop)",
+          "options": [
+            { "value": "align-left-top", "label": "Left Top" },
+            { "value": "align-left-center", "label": "Left Center" },
+            { "value": "align-left-bottom", "label": "Left Bottom" },
+            { "value": "align-center-top", "label": "Center Top" },
+            { "value": "align-center-center", "label": "Center Middle" },
+            { "value": "align-center-bottom", "label": "Center Bottom" },
+            { "value": "align-right-top", "label": "Right Top" },
+            { "value": "align-right-center", "label": "Right Center" },
+            { "value": "align-right-bottom", "label": "Right Bottom" }
+          ],
+          "default": "align-center-center"
+        },
+        {
+          "type": "select",
+          "id": "alignment_mobile",
+          "label": "Content Alignment (Mobile)",
+          "options": [
+            { "value": "align-left-top", "label": "Left Top" },
+            { "value": "align-left-center", "label": "Left Center" },
+            { "value": "align-left-bottom", "label": "Left Bottom" },
+            { "value": "align-center-top", "label": "Center Top" },
+            { "value": "align-center-center", "label": "Center Middle" },
+            { "value": "align-center-bottom", "label": "Center Bottom" },
+            { "value": "align-right-top", "label": "Right Top" },
+            { "value": "align-right-center", "label": "Right Center" },
+            { "value": "align-right-bottom", "label": "Right Bottom" }
+          ],
+          "default": "align-center-center"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Dynamic Swiper Slider"
+    }
+  ]
+}
+{% endschema %}

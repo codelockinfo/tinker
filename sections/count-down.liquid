@@ -1,0 +1,294 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .impact-counter {
+    background-color: {{ section.settings.background_color }};
+    text-align: center;
+  }
+
+  .impact-counter__header {
+    margin-bottom: 4rem;
+  }
+
+  .impact-counter__title {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .impact-counter__subheading {
+    margin-top: 1rem;
+    color: rgba(var(--color-foreground), 0.7);
+    font-size: 20px;
+  }
+
+  .impact-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 3rem;
+  }
+
+  .impact-item {
+    flex: 1;
+    min-width: 200px;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease;
+  }
+
+  .impact-item:hover {
+    transform: translateY(-5px);
+  }
+
+  .impact-item__icon {
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+
+  .impact-item__icon img, 
+  .impact-item__icon svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .impact-item__count {
+    font-size: 2.6rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+    color: #3e3d3d;
+  }
+
+  .impact-item__label {
+    font-size: 18px;
+    color: rgba(var(--color-foreground), 0.6);
+    margin-top: 0.5rem;
+    text-transform: capitalize;
+  }
+
+  @media screen and (max-width: 749px) {
+    .impact-item {
+      min-width: 45%;
+    }
+    .impact-item__count {
+      font-size: 2.8rem;
+    }
+  }
+{%- endstyle -%}
+
+<div class="impact-counter section-{{ section.id }}-padding color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width">
+    {%- if section.settings.title != blank or section.settings.subheading != blank -%}
+      <div class="impact-counter__header">
+        {%- if section.settings.title != blank -%}
+          <div class="impact-counter__title {{ section.settings.heading_size }}">{{ section.settings.title }}</div>
+        {%- endif -%}
+        {%- if section.settings.subheading != blank -%}
+          <div class="impact-counter__subheading">{{ section.settings.subheading }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="impact-grid">
+      {%- for block in section.blocks -%}
+        <div class="impact-item" {{ block.shopify_attributes }}>
+          <div class="impact-item__icon">
+            {%- if block.settings.icon_svg != blank -%}
+              {{ block.settings.icon_svg }}
+            {%- elsif block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 120 | image_tag: loading: 'lazy' }}
+            {%- else -%}
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- endif -%}
+          </div>
+          <h3 class="impact-item__count" data-target="{{ block.settings.count }}">0+</h3>
+          <p class="impact-item__label">{{ block.settings.label }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const initCounters = () => {
+      const counters = document.querySelectorAll('.impact-item__count');
+      
+      const observerOptions = {
+        threshold: 0.5
+      };
+
+      const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const el = entry.target;
+            const targetStr = el.getAttribute('data-target');
+            const target = parseInt(targetStr.replace(/[^0-9]/g, ''));
+            const suffix = targetStr.replace(/[0-9,]/g, '');
+            
+            let count = 0;
+            const duration = 2000; // 2 seconds
+            const startTime = performance.now();
+
+            const update = (currentTime) => {
+              const elapsed = currentTime - startTime;
+              const progress = Math.min(elapsed / duration, 1);
+              
+              // Easing function (easeOutQuad)
+              const ease = 1 - (1 - progress) * (1 - progress);
+              const currentCount = Math.floor(ease * target);
+              
+              el.innerText = currentCount.toLocaleString() + suffix;
+
+              if (progress < 1) {
+                requestAnimationFrame(update);
+              } else {
+                el.innerText = target.toLocaleString() + suffix;
+              }
+            };
+
+            requestAnimationFrame(update);
+            observer.unobserve(el);
+          }
+        });
+      }, observerOptions);
+
+      counters.forEach(counter => observer.observe(counter));
+    };
+
+    // Initialize on load
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      initCounters();
+    } else {
+      document.addEventListener('DOMContentLoaded', initCounters);
+    }
+
+    // Support for Shopify Theme Editor
+    document.addEventListener('shopify:section:load', (event) => {
+      if (event.target.classList.contains('impact-counter')) {
+        initCounters();
+      }
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Impact Counters",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "title",
+      "default": "<p>Impact by the Numbers</p>",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        { "value": "h2", "label": "Small" },
+        { "value": "h1", "label": "Medium" },
+        { "value": "h0", "label": "Large" }
+      ],
+      "label": "Heading Size"
+    },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "default": "<p>Every figure tells a story of growth and achievement.</p>",
+      "label": "Subheading"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color Scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Section Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "impact_item",
+      "name": "Counter",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Icon Image"
+        },
+        {
+          "type": "textarea",
+          "id": "icon_svg",
+          "label": "Icon SVG (Optional)",
+          "info": "Paste SVG code here. Overrides image."
+        },
+        {
+          "type": "text",
+          "id": "count",
+          "default": "10k+",
+          "label": "Number/Count"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "default": "Happy Customers",
+          "label": "Label Text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Impact Counters",
+      "blocks": [
+        { "type": "impact_item" },
+        { "type": "impact_item" },
+        { "type": "impact_item" },
+        { "type": "impact_item" }
+      ]
+    }
+  ]
+}
+{% endschema %}

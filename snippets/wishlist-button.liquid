@@ -1,0 +1,41 @@
+{% comment %}
+  Renders a wishlist button for a product
+
+  @param {product} product - The product object
+  @param {string} class - Additional CSS classes (optional)
+{% endcomment %}
+
+{% liquid
+  assign button_class = 'wishlist-button'
+  if class != blank
+    assign button_class = button_class | append: ' ' | append: class
+  endif
+%}
+
+<button 
+  type="button"
+  class="{{ button_class }}"
+  data-wishlist-button
+  data-product-id="{{ product.id }}"
+  data-product-handle="{{ product.handle }}"
+  aria-label="Add {{ product.title | escape }} to wishlist"
+  title="Add to wishlist"
+>
+  <svg class="wishlist-button__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path 
+      d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" 
+      stroke="currentColor" 
+      stroke-width="2" 
+      stroke-linecap="round" 
+      stroke-linejoin="round"
+      fill="none"
+    />
+  </svg>
+  <svg class="wishlist-button__icon--filled" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <path 
+      d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" 
+      fill="currentColor"
+    />
+  </svg>
+</button>
+

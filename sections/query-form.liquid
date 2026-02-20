@@ -1,0 +1,212 @@
+{% comment %}
+Have Any Query – Support / Service Form
+{% endcomment %}
+
+<section
+  class="query-form-section"
+  style="
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <div class="query-form-wrapper">
+
+    {% if section.settings.heading != blank %}
+      <h2 class="query-form-heading">
+        {{ section.settings.heading }}
+      </h2>
+    {% endif %}
+
+    {% form 'contact', class: 'query-form' %}
+
+      <!-- Full width -->
+      <div class="form-field full">
+        <input type="text" name="contact[name]" placeholder="Customer Full Name" required>
+      </div>
+
+      <!-- Row 1 -->
+      <div class="form-field">
+        <input type="tel" name="contact[phone]" placeholder="Phone">
+      </div>
+      <div class="form-field">
+        <input type="email" name="contact[email]" placeholder="E-mail">
+      </div>
+      <div class="form-field">
+        <input type="date" name="contact[date]">
+      </div>
+
+      <!-- Row 2 -->
+      <div class="form-field">
+        <input type="text" name="contact[location]" placeholder="Location">
+      </div>
+      <div class="form-field">
+        <input type="text" name="contact[pincode]" placeholder="Pincode">
+      </div>
+      <div class="form-field">
+        <input type="text" name="contact[product_category]" placeholder="Product Category">
+      </div>
+
+      <!-- Row 3 -->
+      <div class="form-field">
+        <input type="text" name="contact[product_id]" placeholder="Product ID">
+      </div>
+      <div class="form-field">
+        <input type="text" name="contact[dealer_name]" placeholder="Dealer Name">
+      </div>
+      <div class="form-field">
+        <input type="date" name="contact[purchase_date]" placeholder="Purchase Date">
+      </div>
+
+      <!-- Message -->
+      <div class="form-field full">
+        <textarea name="contact[problem]" placeholder="Problem"></textarea>
+      </div>
+
+      <button type="submit" class="query-form-button">
+        {{ section.settings.button_text }}
+      </button>
+
+      {% if form.posted_successfully? %}
+        <p class="form-success">Thank you! Your message has been sent.</p>
+      {% endif %}
+
+      {% if form.errors %}
+        <p class="form-error">Please check the form and try again.</p>
+      {% endif %}
+
+    {% endform %}
+
+  </div>
+</section>
+
+<style>
+.query-form-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.query-form-heading {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 40px;
+}
+
+.query-form {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  background: #fff;
+}
+
+.form-field textarea {
+  min-height: 160px;
+  resize: vertical;
+}
+
+.form-field.full {
+  grid-column: span 3;
+}
+
+.query-form-button {
+  grid-column: span 3;
+  margin: 20px auto 0;
+  padding: 14px 36px;
+  background: #146dd4;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.query-form-button:hover {
+  background: rgb(15, 99, 196);
+}
+
+.form-success,
+.form-error {
+  grid-column: span 3;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.form-success { color: green; }
+.form-error { color: red; }
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .query-form {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .form-field.full,
+  .query-form-button {
+    grid-column: span 2;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .query-form {
+    grid-template-columns: 1fr;
+  }
+  .form-field.full,
+  .query-form-button {
+    grid-column: span 1;
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Have Any Query Form",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Have any Query ?"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "SEND YOUR MESSAGE"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "default": 80
+    }
+  ],
+  "presets": [
+    {
+      "name": "Have Any Query Form"
+    }
+  ]
+}
+{% endschema %}

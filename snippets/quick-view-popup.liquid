@@ -1,0 +1,265 @@
+{% comment %}
+  Renders a quick view popup modal for wishlist products
+  Desktop: Image on left, white overlay on right with product details
+  Mobile: Image at top, scrollable content below
+
+  @param {product} product - The product object to display
+{% endcomment %}
+
+{% liquid
+  assign first_variant = product.selected_or_first_available_variant
+  assign rating = product.metafields.reviews.rating.value
+  assign reviews_count = product.metafields.reviews.rating_count.value
+  assign rating_value = rating | default: 5 | times: 1.0 | round
+  assign reviews_count_value = reviews_count | default: 1
+%}
+
+{% comment %} Desktop Quick View Popup {% endcomment %}
+<div class="quick-view-popup quick-view-popup--desktop" id="quick-view-popup-{{ product.id }}" data-product-id="{{ product.id }}" role="dialog" aria-modal="true" aria-labelledby="quick-view-popup-title-{{ product.id }}" data-quick-view-popup>
+  <div class="quick-view-popup__overlay" data-popup-close></div>
+  
+  <div class="quick-view-popup__content">
+    <div class="quick-view-popup__inner">
+      <button class="quick-view-popup__close" data-popup-close aria-label="Close popup">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      {% comment %} Left side: Product Image {% endcomment %}
+      <div class="quick-view-popup__image-section">
+        {% if product.featured_image %}
+          <div class="quick-view-popup__image-wrapper">
+            <img 
+              src="{{ product.featured_image | image_url: width: 800 }}"
+              srcset="{{ product.featured_image | image_url: width: 400 }} 400w,
+                      {{ product.featured_image | image_url: width: 800 }} 800w,
+                      {{ product.featured_image | image_url: width: 1200 }} 1200w"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              alt="{{ product.featured_image.alt | escape }}"
+              class="quick-view-popup__image"
+              loading="lazy"
+              width="{{ product.featured_image.width }}"
+              height="{{ product.featured_image.height }}"
+            >
+          </div>
+        {% else %}
+          <div class="quick-view-popup__image-wrapper quick-view-popup__image-wrapper--placeholder">
+            {{ 'product-1' | placeholder_svg_tag: 'placeholder' }}
+          </div>
+        {% endif %}
+      </div>
+
+      {% comment %} Right side: Product Details {% endcomment %}
+      <div class="quick-view-popup__details-section">
+        <div class="quick-view-popup__details-content">
+          {% comment %} Title and Rating {% endcomment %}
+          <div class="quick-view-popup__header">
+            <h2 class="quick-view-popup__title" id="quick-view-popup-title-{{ product.id }}">
+              {{ product.title | escape }}
+            </h2>
+
+            {% comment %} Rating {% endcomment %}
+            <div class="quick-view-popup__rating">
+              <div class="quick-view-popup__stars">
+                {% for i in (1..5) %}
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 1L12.09 7.26L19 8.27L14 12.14L15.18 19.02L10 15.77L4.82 19.02L6 12.14L1 8.27L7.91 7.26L10 1Z" 
+                      fill="{% if i <= rating_value %}#FFD700{% else %}#E0E0E0{% endif %}" 
+                      stroke="{% if i <= rating_value %}#FFD700{% else %}#E0E0E0{% endif %}" 
+                      stroke-width="1"/>
+                  </svg>
+                {% endfor %}
+              </div>
+              <span class="quick-view-popup__reviews-count">{{ reviews_count_value }} review{% if reviews_count_value != 1 %}s{% endif %}</span>
+            </div>
+          </div>
+
+          {% comment %} Price {% endcomment %}
+          <div class="quick-view-popup__price">
+            {% if product.compare_at_price > product.price %}
+              <span class="quick-view-popup__price--sale">{{ product.price | money }}</span>
+              <span class="quick-view-popup__price--compare">{{ product.compare_at_price | money }}</span>
+            {% else %}
+              <span>{{ product.price | money }}</span>
+            {% endif %}
+          </div>
+
+          {% comment %} Description {% endcomment %}
+          {% if product.description != blank %}
+            <div class="quick-view-popup__description">
+              {{ product.description }}
+            </div>
+          {% endif %}
+
+          {% comment %} Action Buttons {% endcomment %}
+          <div class="quantity-with-action-btns">
+            {% comment %} Quantity Selector {% endcomment %}
+            <div class="quick-view-popup__quantity">
+              <button type="button" class="quick-view-popup__quantity-btn quick-view-popup__quantity-btn--minus" data-quantity-minus>-</button>
+              <input type="number" class="quick-view-popup__quantity-input" value="1" min="1" data-quantity-input>
+              <button type="button" class="quick-view-popup__quantity-btn quick-view-popup__quantity-btn--plus" data-quantity-plus>+</button>
+            </div>
+
+            <div class="quick-view-popup__actions">
+              {% render 'add-to-cart-button', product: product, variant: first_variant %}
+              
+              <div class="quick-view-popup__action-icons">
+                {% render 'wishlist-button', product: product %}
+                {% render 'compare-button', product: product %}
+              </div>
+            </div>
+          </div>
+
+          {% comment %} Terms & Conditions {% endcomment %}
+          <div class="quick-view-popup__terms">
+            <label class="quick-view-popup__terms-label">
+              <input type="checkbox" class="quick-view-popup__terms-checkbox" data-terms-checkbox>
+              <span>I agree with <a href="/pages/terms-and-conditions" class="quick-view-popup__terms-link">Terms & Conditions</a></span>
+            </label>
+          </div>
+
+          {% comment %} Buy It Now Button {% endcomment %}
+          {% if first_variant %}
+            <a href="/cart/add?id={{ first_variant.id }}&quantity=1&return_to=/checkout" class="quick-view-popup__buy-now-btn" data-buy-now>
+              Buy It Now
+            </a>
+          {% endif %}
+
+          {% comment %} View Full Details Link {% endcomment %}
+          <a href="{{ product.url }}" class="quick-view-popup__view-details" data-view-details>
+            View Full Details >>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% comment %} Mobile Quick View Popup {% endcomment %}
+<div class="quick-view-popup quick-view-popup--mobile" id="quick-view-popup-mobile-{{ product.id }}" data-product-id="{{ product.id }}" role="dialog" aria-modal="true" aria-labelledby="quick-view-popup-mobile-title-{{ product.id }}" data-quick-view-popup>
+  <div class="quick-view-popup__overlay" data-popup-close></div>
+  
+  <div class="quick-view-popup__content quick-view-popup__content--mobile">
+    {% comment %} Image Counter Badge {% endcomment %}
+    {% if product.images.size > 1 %}
+      <div class="quick-view-popup__image-counter">
+        <span data-current-image>1</span>/<span data-total-images>{{ product.images.size }}</span>
+      </div>
+    {% endif %}
+
+    <div class="quick-view-popup__inner quick-view-popup__inner--mobile">
+      <button class="quick-view-popup__close" data-popup-close aria-label="Close popup">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      {% comment %} Product Image {% endcomment %}
+      {% if product.featured_image %}
+        <div class="quick-view-popup__image-section quick-view-popup__image-section--mobile">
+          <div class="quick-view-popup__image-wrapper quick-view-popup__image-wrapper--mobile">
+            <img 
+              src="{{ product.featured_image | image_url: width: 800 }}"
+              srcset="{{ product.featured_image | image_url: width: 400 }} 400w,
+                      {{ product.featured_image | image_url: width: 800 }} 800w,
+                      {{ product.featured_image | image_url: width: 1200 }} 1200w"
+              sizes="100vw"
+              alt="{{ product.featured_image.alt | escape }}"
+              class="quick-view-popup__image quick-view-popup__image--mobile"
+              loading="lazy"
+              width="{{ product.featured_image.width }}"
+              height="{{ product.featured_image.height }}"
+            >
+          </div>
+        </div>
+      {% else %}
+        <div class="quick-view-popup__image-section quick-view-popup__image-section--mobile">
+          <div class="quick-view-popup__image-wrapper quick-view-popup__image-wrapper--mobile quick-view-popup__image-wrapper--placeholder">
+            {{ 'product-1' | placeholder_svg_tag: 'placeholder' }}
+          </div>
+        </div>
+      {% endif %}
+
+      {% comment %} Scrollable Content {% endcomment %}
+      <div class="quick-view-popup__scrollable-content">
+        {% comment %} Title and Rating {% endcomment %}
+        <div class="quick-view-popup__header">
+          <h2 class="quick-view-popup__title quick-view-popup__title--mobile" id="quick-view-popup-mobile-title-{{ product.id }}">
+            {{ product.title | escape }}
+          </h2>
+
+          {% comment %} Rating {% endcomment %}
+          <div class="quick-view-popup__rating">
+            <div class="quick-view-popup__stars">
+              {% for i in (1..5) %}
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10 1L12.09 7.26L19 8.27L14 12.14L15.18 19.02L10 15.77L4.82 19.02L6 12.14L1 8.27L7.91 7.26L10 1Z" 
+                    fill="{% if i <= rating_value %}#FFD700{% else %}#E0E0E0{% endif %}" 
+                    stroke="{% if i <= rating_value %}#FFD700{% else %}#E0E0E0{% endif %}" 
+                    stroke-width="1"/>
+                </svg>
+              {% endfor %}
+            </div>
+            <span class="quick-view-popup__reviews-count">{{ reviews_count_value }} review{% if reviews_count_value != 1 %}s{% endif %}</span>
+          </div>
+        </div>
+
+        {% comment %} Price {% endcomment %}
+        <div class="quick-view-popup__price quick-view-popup__price--mobile">
+          {% if product.compare_at_price > product.price %}
+            <span class="quick-view-popup__price--sale">{{ product.price | money }}</span>
+            <span class="quick-view-popup__price--compare">{{ product.compare_at_price | money }}</span>
+          {% else %}
+            <span>{{ product.price | money }}</span>
+          {% endif %}
+        </div>
+
+        {% comment %} Description {% endcomment %}
+        {% if product.description != blank %}
+          <div class="quick-view-popup__description quick-view-popup__description--mobile">
+            {{ product.description }}
+          </div>
+        {% endif %}
+
+        {% comment %} Action Buttons {% endcomment %}
+        <div class="quantity-with-action-btns">
+          {% comment %} Quantity Selector {% endcomment %}
+          <div class="quick-view-popup__quantity">
+            <button type="button" class="quick-view-popup__quantity-btn quick-view-popup__quantity-btn--minus" data-quantity-minus>-</button>
+            <input type="number" class="quick-view-popup__quantity-input" value="1" min="1" data-quantity-input>
+            <button type="button" class="quick-view-popup__quantity-btn quick-view-popup__quantity-btn--plus" data-quantity-plus>+</button>
+          </div>
+
+          <div class="quick-view-popup__actions quick-view-popup__actions--mobile">
+            {% render 'add-to-cart-button', product: product, variant: first_variant %}
+            
+            <div class="quick-view-popup__action-icons">
+              {% render 'wishlist-button', product: product %}
+              {% render 'compare-button', product: product %}
+            </div>
+          </div>
+        </div>
+
+        {% comment %} Terms & Conditions {% endcomment %}
+        <div class="quick-view-popup__terms quick-view-popup__terms--mobile">
+          <label class="quick-view-popup__terms-label">
+            <input type="checkbox" class="quick-view-popup__terms-checkbox" data-terms-checkbox>
+            <span>I agree with <a href="/pages/terms-and-conditions" class="quick-view-popup__terms-link">Terms & Conditions</a></span>
+          </label>
+        </div>
+
+        {% comment %} Buy It Now Button {% endcomment %}
+        {% if first_variant %}
+          <a href="/cart/add?id={{ first_variant.id }}&quantity=1&return_to=/checkout" class="quick-view-popup__buy-now-btn quick-view-popup__buy-now-btn--mobile" data-buy-now>
+            Buy It Now
+          </a>
+        {% endif %}
+
+        {% comment %} View Full Details Link {% endcomment %}
+        <a href="{{ product.url }}" class="quick-view-popup__view-details quick-view-popup__view-details--mobile" data-view-details>
+          View Full Details >>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+

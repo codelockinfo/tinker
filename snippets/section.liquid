@@ -1,0 +1,192 @@
+{%- doc -%}
+  Renders a wrapper section
+
+  @param {section} section - The section object
+  @param {string} children - The children of the section
+{%- enddoc -%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+
+<div
+  class="
+    section
+    section-{{ section.id }}
+    section--{{ section.settings.section_width }}
+    color-{{ section.settings.color_scheme }}
+    {% if section.settings.enable_card_hover %}card-hover-enabled{% endif %}
+  "
+  data-testid="ui-test-section"
+  {% if request.visual_preview_mode %}
+    data-shopify-visual-preview
+  {% endif %}
+  style="
+    {% if section.settings.section_height == 'custom' %}
+      --section-min-height: {{ section.settings.section_height_custom }}svh;
+    {% elsif section.settings.section_height == 'full-screen' %}
+      --section-min-height: 100svh;
+    {% elsif section.settings.section_height != '' %}
+      --section-min-height: var(--section-height-{{ section.settings.section_height }});
+    {% endif %}
+    {% if section.settings.section_height != '' %}
+      --section-preview-height: 600px;
+    {% endif %}
+  "
+>
+  <div class="custom-section-background">
+    {% render 'background-media',
+      background_media: section.settings.background_media,
+      background_video: section.settings.video,
+      background_video_position: section.settings.video_position,
+      background_image: section.settings.background_image,
+      background_image_position: section.settings.background_image_position
+    %}
+  </div>
+
+  <div
+    class="border-style custom-section-content"
+    style="{% render 'border-override', settings: section.settings %}"
+  >
+    {% if section.settings.toggle_overlay %}
+      {% render 'overlay', settings: section.settings, layer: '0' %}
+    {% endif %}
+
+    <div
+      class="
+        spacing-style
+        layout-panel-flex
+        layout-panel-flex--{{ section.settings.content_direction }}
+        section-content-wrapper
+        {% if section.settings.vertical_on_mobile %}mobile-column{% endif %}
+      "
+      style="
+        {% render 'layout-panel-style', settings: section.settings %}
+        {% render 'spacing-style', settings: section.settings %}
+      "
+      data-testid="section-content"
+    >
+      {{ children }}
+    </div>
+  </div>
+</div>
+
+
+{% comment %} {% stylesheet %}
+  .section-wrapper {
+    --section-height-offset: 0px;
+  }
+
+  .section[data-shopify-visual-preview] {
+    min-height: var(--section-preview-height);
+    padding-top: 0;
+  }
+
+  .section[data-shopify-visual-preview] .custom-section-background {
+    display: none;
+  }
+
+  body:has(> #header-group > .header-section > #header-component[transparent]):not(
+      :has(> #header-group > .header-section + .shopify-section)
+    )
+    > main
+    > .section-wrapper:first-child {
+    --section-height-offset: var(--header-group-height, 0);
+  }
+
+  .custom-section-background {
+    grid-column: 1 / -1;
+  }
+
+  .custom-section-content {
+    z-index: var(--layer-flat);
+  }
+  
+
+
+
+  .section-{{ section.id }} .section-content-wrapper > div {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 14px;
+  padding: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition:
+    box-shadow 0.35s ease,
+    transform 0.35s ease;
+}
+
+
+
+/* Hover ONLY on that card */
+.section-{{ section.id }} .section-content-wrapper > div:hover {
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+  transform: translateY(-8px);
+  z-index: 2;
+}
+
+/* Mobile safety */
+@media (max-width: 768px) {
+  .section-content-wrapper > div {
+    padding: 16px;
+  }
+}
+
+{% endstylesheet %} {% endcomment %}
+
+
+
+{% stylesheet %}
+
+/* Base helpers */
+.section-wrapper {
+  --section-height-offset: 0px;
+}
+
+.custom-section-background {
+  grid-column: 1 / -1;
+}
+
+.custom-section-content {
+  z-index: var(--layer-flat);
+}
+
+/* ==============================
+   BASE CARD (NO HOVER)
+================================ */
+.section-content-wrapper > div {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 15px;
+  cursor: default;
+}
+
+/* ==============================
+   HOVER EFFECT (ONLY WHEN ENABLED)
+================================ */
+.card-hover-enabled .section-content-wrapper > div {
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition:
+    box-shadow 0.35s ease,
+    transform 0.35s ease;
+}
+
+.card-hover-enabled .section-content-wrapper > div:hover {
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+  transform: translateY(-8px);
+  z-index: 2;
+}
+
+/* ==============================
+   MOBILE SAFETY
+================================ */
+@media (max-width: 768px) {
+  .section-content-wrapper > div {
+    padding: 16px;
+  }
+
+  .card-hover-enabled .section-content-wrapper > div:hover {
+    transform: none;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.14);
+  }
+}
+
+{% endstylesheet %}
