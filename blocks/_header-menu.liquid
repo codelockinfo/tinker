@@ -159,7 +159,7 @@
       <div class="header-menu__inner">
         <nav header-menu>
           <div
-            class="menu-list"
+            class="menu-list{% unless block_settings.enable_mega_menu %} menu-list--simple{% endunless %}"
             style="{% render 'menu-font-styles', settings: block_settings %}"
           >
             {% assign class = 'overflow-menu' | append: color_scheme_classes %}
@@ -696,6 +696,71 @@
     /* preserves the inherited grid layout when this submenu wrapper is used */
     display: contents;
   }
+  
+  /* Simple Dropdown Styles */
+  .menu-list--simple .menu-list__list-item:has(.menu-list__submenu) {
+     position: relative;
+  }
+
+  .menu-list--simple .menu-list__submenu {
+     width: max-content;
+     min-width: 220px;
+     max-width: 350px;
+     left: 0;
+     top: 100%;
+     right: auto;
+     box-shadow: var(--shadow-popover);
+     border: 1px solid var(--color-border);
+     margin-top: 0;
+     padding: var(--padding-xs);
+     clip-path: none !important; /* Disable clip-path animation for simple dropdown */
+     visibility: hidden;
+     opacity: 0;
+     transition: opacity 0.2s ease, visibility 0.2s ease;
+  }
+  
+  .menu-list--simple .menu-list__list-item:hover .menu-list__submenu,
+  .menu-list--simple .menu-list__list-item:focus-within .menu-list__submenu {
+      visibility: visible;
+      opacity: 1;
+  }
+
+  .menu-list--simple .mega-menu {
+     width: 100%;
+     padding: 0; 
+  }
+
+  .menu-list--simple .mega-menu__grid {
+      display: flex; /* or block */
+      flex-direction: column;
+      gap: 0;
+  }
+  
+  .menu-list--simple .mega-menu__list {
+      display: block;
+      grid-template-columns: none;
+      grid-column: auto;
+      gap: 0;
+  }
+
+  .menu-list--simple .mega-menu__column {
+      width: 100%;
+      margin-bottom: 0;
+      border: none !important;
+  }
+
+  /* Fix for mega menu links in simple dropdown to look like regular links */
+  .menu-list--simple .mega-menu__link {
+      padding: var(--padding-2xs) var(--padding-xs);
+      width: 100%;
+      display: block;
+  }
+
+  /* Handle right-alignment for last items in simple menu */
+  .menu-list--simple > .menu-list__list > .menu-list__list-item:nth-last-child(-n+2) .menu-list__submenu {
+      left: auto;
+      right: 0; 
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -708,6 +773,13 @@
       "id": "menu",
       "label": "t:settings.menu",
       "default": "main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_mega_menu",
+      "label": "Enable Mega Menu",
+      "default": false,
+      "info": "Uncheck to display as a simple dropdown"
     },
     {
       "type": "color_scheme",
