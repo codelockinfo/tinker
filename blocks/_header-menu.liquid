@@ -698,14 +698,15 @@
   }
   
   /* Simple Dropdown Styles */
-  .menu-list--simple .menu-list__list-item:has(.menu-list__submenu) {
+  .menu-list--simple .menu-list__list-item:has(.menu-list__submenu),
+  .menu-list--simple .menu-list__list-item {
      position: relative;
   }
 
   .menu-list--simple .menu-list__submenu {
-     width: max-content;
-     min-width: 220px;
-     max-width: 350px;
+     width: max-content !important;
+     min-width: 200px;
+     max-width: 320px;
      left: 0;
      top: 100%;
      right: auto;
@@ -717,6 +718,16 @@
      visibility: hidden;
      opacity: 0;
      transition: opacity 0.2s ease, visibility 0.2s ease;
+     z-index: 1000;
+     background-color: var(--color-background);
+  }
+  
+  .menu-list--simple .menu-list__submenu-inner {
+    padding: 0 !important;
+    display: block;
+    width: 100%;
+    max-height: none;
+    overflow: visible;
   }
   
   .menu-list--simple .menu-list__list-item:hover .menu-list__submenu,
@@ -727,7 +738,8 @@
 
   .menu-list--simple .mega-menu {
      width: 100%;
-     padding: 0; 
+     padding: 0 !important; 
+     max-width: none;
   }
 
   .menu-list--simple .mega-menu__grid {
@@ -741,6 +753,10 @@
       grid-template-columns: none;
       grid-column: auto;
       gap: 0;
+  }
+  
+  .menu-list--simple .mega-menu__list li {
+     break-after: auto !important;
   }
 
   .menu-list--simple .mega-menu__column {
@@ -760,6 +776,10 @@
   .menu-list--simple > .menu-list__list > .menu-list__list-item:nth-last-child(-n+2) .menu-list__submenu {
       left: auto;
       right: 0; 
+  }
+  /* Ensure mega menu inner container doesn't force width */
+  .menu-list--simple .mega-menu__content {
+    grid-column: auto !important;
   }
 {% endstylesheet %}
 
